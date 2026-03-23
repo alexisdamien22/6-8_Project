@@ -1,8 +1,26 @@
+:root {
+  --color-bg-main: #20252b;
+  --color-text-main: #ffffff;
+  --color-border-soft: rgba(0, 0, 0, 0.1);
+
+  --color-done: #58cc02;
+  --color-todo: #fda20c;
+  --color-waiting: #e5e5e5;
+
+  --color-done-shadow: #46a302;
+  --color-todo-shadow: #ce830a;
+  --color-waiting-shadow: #afafaf;
+
+  --color-halo-border: #3a424c;
+  --color-halo-bg: rgba(255, 255, 255, 0);
+}
+
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f7f7;
+  background-color: var(--color-bg-main);
 }
 
 .path-container {
@@ -20,72 +38,133 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  transition: transform 0.3s ease;
 }
 
 .path-button-container {
   position: relative;
   width: 70px;
-  height: 70px;
+  height: 60px;
 }
 
 .path-dot,
 .path-dot-shadow {
   width: 70px;
-  height: 70px;
+  height: 60px;
   border-radius: 50%;
   position: absolute;
   left: 0;
   box-sizing: border-box;
 }
 
+.path-dot-shadow::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background-color: inherit;
+  z-index: -1;
+}
+
 .path-dot-shadow {
-  top: 6px;
-  background-color: #e0e0e0;
+  top: 10px;
   z-index: 1;
 }
 
 .path-dot {
   top: 0;
-  background-color: #ffffff;
-  border: 4px solid #e0e0e0;
   z-index: 2;
+  border: 1px solid var(--color-border-soft);
   cursor: pointer;
-  transition: all 0.1s;
+  transition: transform 0.1s;
 }
 
 .done .path-dot {
-  background-color: #58cc02;
-  border-color: #58cc02;
+  background-color: var(--color-done);
 }
 .done .path-dot-shadow {
-  background-color: #46a302;
+  background-color: var(--color-done-shadow);
 }
 
 .todo .path-dot {
-  background-color: #1cb0f6;
-  border-color: #1cb0f6;
+  background-color: var(--color-todo);
 }
 .todo .path-dot-shadow {
-  background-color: #1899d6;
+  background-color: var(--color-todo-shadow);
 }
 
 .waiting .path-dot {
-  background-color: #e5e5e5;
-  border-color: #afafaf;
+  background-color: var(--color-waiting);
 }
 .waiting .path-dot-shadow {
-  background-color: #afafaf;
+  background-color: var(--color-waiting-shadow);
+}
+
+.today-halo {
+  position: absolute;
+  width: 77px;
+  height: 67px;
+  background-color: var(--color-halo-bg);
+  border-radius: 50%;
+  border: 6px solid var(--color-halo-border);
+  top: calc(50% + 7px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+  animation: gravity-bounce 1.9s infinite;
+}
+
+@keyframes gravity-bounce {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
+  }
+  45% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.85;
+    animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.path-button-container:active .path-dot {
+  transform: translateY(8px);
+}
+
+.path-button-container:active .mascotte-path {
+  transform: translateX(-50%) translateY(8px);
+}
+
+.path-button-container:active .today-halo {
+  margin-top: 4px;
+}
+
+.mascotte-path {
+  position: absolute;
+  width: 80px;
+  height: auto;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  transition: transform 0.1s;
 }
 
 .path-label {
-  margin-top: 15px;
+  margin-top: 20px;
   font-weight: bold;
-  color: #afafaf;
+  color: var(--color-text-main);
   text-transform: uppercase;
   font-size: 14px;
-}
-
-.path-dot:active {
-  transform: translateY(4px);
 }
