@@ -1,45 +1,91 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f7f7;
+}
+
 .path-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 25px;
-  padding: 30px 0;
-  position: absolute;
-  width: 5px;
-  background: #ccc;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 0;
+  gap: 40px;
+  padding: 60px 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .path-step {
-  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.path-button-container {
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+
+.path-dot,
+.path-dot-shadow {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  box-sizing: border-box;
+}
+
+.path-dot-shadow {
+  top: 6px;
+  background-color: #e0e0e0;
+  z-index: 1;
 }
 
 .path-dot {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: white;
-  border: 4px solid #ccc;
+  top: 0;
+  background-color: #ffffff;
+  border: 4px solid #e0e0e0;
+  z-index: 2;
+  cursor: pointer;
+  transition: all 0.1s;
 }
 
 .done .path-dot {
-  background: #00b894;
-  border-color: #00b894;
+  background-color: #58cc02;
+  border-color: #58cc02;
 }
+.done .path-dot-shadow {
+  background-color: #46a302;
+}
+
 .todo .path-dot {
-  background: #6c5ce7;
-  border-color: rgb(62, 222, 22);
-  transform: scale(1.1);
+  background-color: #1cb0f6;
+  border-color: #1cb0f6;
 }
+.todo .path-dot-shadow {
+  background-color: #1899d6;
+}
+
+.waiting .path-dot {
+  background-color: #e5e5e5;
+  border-color: #afafaf;
+}
+.waiting .path-dot-shadow {
+  background-color: #afafaf;
+}
+
 .path-label {
+  margin-top: 15px;
   font-weight: bold;
-  margin-top: 5px;
-  color: #555;
+  color: #afafaf;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.path-dot:active {
+  transform: translateY(4px);
 }
