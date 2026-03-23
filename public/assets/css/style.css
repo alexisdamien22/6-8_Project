@@ -65,6 +65,11 @@ body {
   height: 10px;
   background-color: inherit;
   z-index: -1;
+  transition: opacity 0.1s;
+}
+
+.path-button-container:active .path-dot-shadow::before {
+  opacity: 0;
 }
 
 .path-dot-shadow {
@@ -103,12 +108,12 @@ body {
 
 .today-halo {
   position: absolute;
-  width: 77px;
-  height: 67px;
+  width: 80px;
+  height: 70px;
   background-color: var(--color-halo-bg);
   border-radius: 50%;
   border: 6px solid var(--color-halo-border);
-  top: calc(50% + 7px);
+  top: calc(50% + 10px);
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
@@ -167,4 +172,61 @@ body {
   color: var(--color-text-main);
   text-transform: uppercase;
   font-size: 14px;
+}
+
+.duo-popup {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.5);
+  width: 180px;
+  background-color: white;
+  border: 2px solid var(--color-border-soft);
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.duo-popup.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
+
+.popup-arrow {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid white;
+}
+
+.popup-content h3 {
+  color: #3c3c3c;
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+.popup-content p {
+  color: #777;
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.start-btn {
+  background-color: var(--color-todo);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--color-todo-shadow);
 }

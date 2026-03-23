@@ -1,6 +1,30 @@
 class AppView {
   constructor() {
     this.app = document.getElementById("app");
+    this.initEventListeners();
+  }
+
+  initEventListeners() {
+    this.app.addEventListener("click", (e) => {
+      if (e.target.classList.contains("path-dot")) {
+        const container = e.target.closest(".path-button-container");
+        const popup = container.querySelector(".duo-popup");
+
+        document.querySelectorAll(".duo-popup").forEach((p) => {
+          if (p !== popup) p.classList.remove("show");
+        });
+
+        popup.classList.toggle("show");
+      } else if (!e.target.closest(".duo-popup")) {
+        document.querySelectorAll(".duo-popup.show").forEach((p) => {
+          p.classList.remove("show");
+        });
+      }
+
+      if (e.target.classList.contains("start-btn")) {
+        console.log("Démarrage de la leçon !");
+      }
+    });
   }
 
   renderHome(childData) {
@@ -10,7 +34,6 @@ class AppView {
 
     for (let i = 0; i < childData.sessions.length; i++) {
       let session = childData.sessions[i];
-
       let offset = 0;
       if (i % 4 === 1) offset = 40;
       if (i % 4 === 2) offset = 0;
@@ -20,7 +43,7 @@ class AppView {
       let haloHTML = "";
 
       if (session.day === dayActuel) {
-        mascotteHTML = `<img src="public/assets/img/mascottes/camelion.png" class="mascotte-path">`;
+        mascotteHTML = `<img src="/assets/img/mascottes/camelion.png" class="mascotte-path">`;
         haloHTML = `<div class="today-halo"></div>`;
       }
 
@@ -30,7 +53,15 @@ class AppView {
                         ${haloHTML}
                         ${mascotteHTML}
                         <div class="path-dot-shadow"></div> 
-                        <div class="path-dot"></div>    
+                        <div class="path-dot"></div>
+                        <div class="duo-popup">
+                          <div class="popup-content">
+                              <h3>Leçon ${i + 1}</h3>
+                              <p>Prêt pour un défi ?</p>
+                              <button class="start-btn">COMMENCER</button>
+                          </div>
+                          <div class="popup-arrow"></div> 
+                        </div>    
                     </div>
                     <span class="path-label">${session.day}</span>
                 </div>`;
