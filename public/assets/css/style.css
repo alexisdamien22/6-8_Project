@@ -1,4 +1,45 @@
-body {
-  margin: 0;
-  padding: 0;
+.path-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  padding: 30px 0;
+  position: absolute;
+  width: 5px;
+  background: #ccc;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.path-step {
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.path-dot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid #ccc;
+}
+
+.done .path-dot {
+  background: #00b894;
+  border-color: #00b894;
+}
+.todo .path-dot {
+  background: #6c5ce7;
+  border-color: rgb(62, 222, 22);
+  transform: scale(1.1);
+}
+.path-label {
+  font-weight: bold;
+  margin-top: 5px;
+  color: #555;
 }
