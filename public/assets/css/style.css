@@ -18,12 +18,31 @@
   --color-halo-bg: rgba(255, 255, 255, 0);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+#app {
+  height: 100vh;
+  overflow-y: hidden;
+}
+
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--color-bg-main);
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 .path-container {
@@ -33,8 +52,12 @@ body {
   gap: 40px;
   padding: 60px 0;
   width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
   margin-bottom: 10vh;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .path-step {
@@ -123,8 +146,8 @@ body {
 
 .today-halo {
   position: absolute;
-  width: 80px;
-  height: 70px;
+  width: 90px;
+  height: 80px;
   background-color: var(--color-halo-bg);
   border-radius: 50%;
   border: 6px solid var(--color-halo-border);
@@ -183,6 +206,8 @@ body {
   z-index: 10;
   pointer-events: none;
   transition: transform 0.1s;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 .path-label {
@@ -199,6 +224,7 @@ body {
   left: 50%;
   transform: translateX(-50%) scale(0.5);
   width: 180px;
+  max-width: calc(100vw - 20px);
   background-color: white;
   border: 2px solid var(--color-border-soft);
   border-radius: 15px;
@@ -210,6 +236,7 @@ body {
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   pointer-events: auto;
+  box-sizing: border-box;
 }
 .path-button-container:has(.duo-popup.show):active .path-dot {
   transform: none;
@@ -307,8 +334,8 @@ body {
 }
 
 .icon-footer {
-  width: 30px;
-  height: 30px;
+  width: auto;
+  height: 90%;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;

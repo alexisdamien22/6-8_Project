@@ -73,14 +73,37 @@ class AppView {
 
       let mascotteHTML = "";
       let haloHTML = "";
+      let popupContent = "";
+      let lockedClass = "";
 
       if (session.day === dayActuel) {
         mascotteHTML = `<img src="/assets/img/mascottes/camelion.png" class="mascotte-path" alt="Mascotte">`;
         haloHTML = `<div class="today-halo"></div>`;
       }
+      if (session.day === dayActuel) {
+        popupContent = `
+                  <h3>Leçon ${i + 1}</h3>
+                  <p>Prêt pour un défi ?</p>
+                  <button class="start-btn">COMMENCER</button>
+              `;
+      } else if (session.status === "done") {
+        popupContent = `
+                  <h3>Leçon ${i + 1}</h3>
+                  <p>Bravo ! Tu as validé cette séance.</p>
+              `;
+      } else {
+        lockedClass = "is-locked";
+        popupContent = `
+                  <h3>Leçon ${i + 1}</h3>
+                  <p>Patience... cette leçon n'est pas encore disponible.</p>
+                  <button class="start-btn disabled" disabled>
+                      <span class="icon-lock">🔒</span> BLOQUÉ
+                  </button>
+              `;
+      }
 
       pathHTML += `
-                <div class="path-step ${session.status}" style="transform: translateX(${offset}px); z-index: 1;">
+                <div class="path-step ${session.status} ${lockedClass}" style="transform: translateX(${offset}px); z-index: 1;">
                     <div class="path-button-container">
                         ${haloHTML}
                         ${mascotteHTML}
@@ -88,11 +111,7 @@ class AppView {
                         <div class="path-dot"></div>
                         <div class="duo-popup">
                           <div class="popup-arrow"></div>
-                          <div class="popup-content">
-                              <h3>Leçon ${i + 1}</h3>
-                              <p>Prêt pour un défi ?</p>
-                              <button class="start-btn">COMMENCER</button>
-                          </div>
+                          ${popupContent}
                         </div>    
                     </div>
                     <span class="path-label">${session.day}</span>
