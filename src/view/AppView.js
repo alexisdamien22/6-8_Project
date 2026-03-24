@@ -125,37 +125,19 @@ class AppView {
 
   renderPodium() {
     this.app.innerHTML = `
-      <div class="page-screen podium-screen">
-        <h1>🏆 Podium</h1>
-        <p>Classement des meilleurs élèves</p>
-        <div class="podium-content">
-          <p>Page en développement...</p>
-        </div>
-      </div>
+      <h1>Podium</h1>    
     `;
   }
 
   renderMusic() {
     this.app.innerHTML = `
-      <div class="page-screen music-screen">
-        <h1>🎵 Musique</h1>
-        <p>Découvrez nos leçons musicales</p>
-        <div class="music-content">
-          <p>Page en développement...</p>
-        </div>
-      </div>
+      <h1>Musique</h1>
     `;
   }
 
   renderMenu() {
     this.app.innerHTML = `
-      <div class="page-screen menu-screen">
-        <h1>☰ Menu</h1>
-        <p>Paramètres et options</p>
-        <div class="menu-content">
-          <p>Page en développement...</p>
-        </div>
-      </div>
+      <h1>Menu</h1>
     `;
   }
 }
