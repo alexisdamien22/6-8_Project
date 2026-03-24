@@ -35,6 +35,7 @@ body {
 #app {
   height: 100vh;
   overflow-y: hidden;
+  background: linear-gradient(135deg, var(--color-bg-main) 0%, #14191e 100%);
 }
 
 body {
@@ -42,7 +43,6 @@ body {
   padding: 0;
   overflow-x: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--color-bg-main);
   max-width: 100vw;
   box-sizing: border-box;
 }
@@ -331,7 +331,6 @@ body {
   box-shadow: 0 3px 0 var(--color-todo-shadow);
 }
 
-/* Cache la fausse icône sur les boutons "Bloqué" pour ne laisser que le cadenas 🔒 */
 .start-btn.disabled::before {
   display: none;
 }
@@ -412,17 +411,33 @@ body {
   border-radius: 10px;
 }
 .parametre {
-  height: 90%;
+  height: 70%;
   aspect-ratio: 1;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.parametre::before {
+  content: "";
+  position: absolute;
+  width: 90%;
+  height: 90%;
 
   -webkit-mask-image: url("../img/icons/parametre.png");
   mask-image: url("../img/icons/parametre.png");
 
   -webkit-mask-size: contain;
   mask-size: contain;
+
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 
+  -webkit-mask-position: center;
+  mask-position: center;
+
   background-color: var(--color-button);
-  border-radius: 10px;
 }
