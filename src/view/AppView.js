@@ -46,22 +46,29 @@ class AppView {
       const button = e.target.closest(".path-button-container");
       if (button) {
         button.classList.add("pressed");
+        try {
+          button.setPointerCapture(e.pointerId);
+        } catch (err) {}
       }
     });
 
-    this.app.addEventListener("pointerup", (e) => {
-      const button = e.target.closest(".path-button-container");
-      if (button) {
-        button.classList.remove("pressed");
-      }
-    });
+    const releaseButton = (e) => {
+      document
+        .querySelectorAll(".path-button-container.pressed")
+        .forEach((btn) => {
+          btn.classList.remove("pressed");
+          if (e && e.pointerId) {
+            try {
+              btn.releasePointerCapture(e.pointerId);
+            } catch (err) {}
+          }
+        });
+    };
 
-    this.app.addEventListener("pointercancel", (e) => {
-      const button = e.target.closest(".path-button-container");
-      if (button) {
-        button.classList.remove("pressed");
-      }
-    });
+    this.app.addEventListener("pointerup", releaseButton);
+    this.app.addEventListener("pointercancel", releaseButton);
+    // Sécurité supplémentaire si la souris sort complètement de la fenêtre
+    this.app.addEventListener("pointerleave", releaseButton);
   }
 
   renderHome(childData) {

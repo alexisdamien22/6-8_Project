@@ -3,7 +3,7 @@
   --color-text-main: #ffffff;
   --color-border-soft: rgba(0, 0, 0, 0.1);
 
-  --color-bg-footer: #1a1e23;
+  --color-bg-footer: #21262c;
   --color-border-light: #2a3139;
 
   --color-done: #58cc02;
@@ -16,6 +16,8 @@
 
   --color-halo-border: #3a424c;
   --color-halo-bg: rgba(255, 255, 255, 0);
+
+  --color-button: #747474;
 }
 
 * {
@@ -71,6 +73,10 @@ body {
   position: relative;
   width: 70px;
   height: 60px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
 }
 
 .path-dot,
@@ -113,7 +119,7 @@ body {
   z-index: 2;
   border: 1px solid var(--color-border-soft);
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: transform 0.05s;
 }
 .path-dot::before {
   content: "";
@@ -193,11 +199,6 @@ body {
 .path-button-container:active .mascotte-path,
 .path-button-container.pressed .mascotte-path {
   transform: translateX(-50%) translateY(8px);
-}
-
-.path-button-container:active .today-halo,
-.path-button-container.pressed .today-halo {
-  margin-top: 4px;
 }
 
 .mascotte-path {
@@ -313,7 +314,6 @@ body {
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background-image: url("/assets/img/icons/light.png");
   background-size: contain;
   background-repeat: no-repeat;
   opacity: 0.8;
@@ -330,6 +330,12 @@ body {
 .start-btn:hover {
   box-shadow: 0 3px 0 var(--color-todo-shadow);
 }
+
+/* Cache la fausse icône sur les boutons "Bloqué" pour ne laisser que le cadenas 🔒 */
+.start-btn.disabled::before {
+  display: none;
+}
+
 .main-footer {
   display: flex;
   justify-content: space-around;
@@ -347,7 +353,7 @@ body {
 
 .icon-footer {
   width: auto;
-  height: 90%;
+  height: 70%;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
@@ -355,5 +361,68 @@ body {
 }
 
 .icon-footer.active {
-  background-color: #2563eb;
+  background-color: #2564eb39;
+  border: 2px solid #2255c4;
+}
+
+.main-header {
+  display: flex;
+  width: 100vw;
+  height: 10vh;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--color-bg-footer);
+  border-bottom: 2px solid var(--color-border-light);
+}
+.profile-icon {
+  height: 70%;
+  aspect-ratio: 1;
+  background-color: #58cc02;
+  background-image: url("../img/mascottes/camelion.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+}
+.strik {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.strik-icon {
+  width: 30px;
+  height: 30px;
+  transform: translateY(-4px);
+}
+.strik-text {
+  color: var(--color-text-main);
+  font-size: 14px;
+}
+.swipe {
+  height: 70%;
+  aspect-ratio: 1;
+  background-image: url("../img/icons/swip.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+}
+.parametre {
+  height: 90%;
+  aspect-ratio: 1;
+
+  -webkit-mask-image: url("../img/icons/parametre.png");
+  mask-image: url("../img/icons/parametre.png");
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  background-color: var(--color-button);
+  border-radius: 10px;
 }
