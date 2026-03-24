@@ -116,20 +116,8 @@ class AppView {
         const pages = ["home", "podium", "music", "menu"];
         const currentPage = pages[index];
 
-        switch (currentPage) {
-          case "home":
-            const homeData = window.appModel?.getChildData();
-            if (homeData) this.renderHome(homeData);
-            break;
-          case "podium":
-            this.renderPodium();
-            break;
-          case "music":
-            this.renderMusic();
-            break;
-          case "menu":
-            this.renderMenu();
-            break;
+        if (window.appController) {
+          window.appController.navigateToPage(currentPage);
         }
       });
     });
@@ -137,20 +125,37 @@ class AppView {
 
   renderPodium() {
     this.app.innerHTML = `
-      <h1>Podium</h1>
-      
+      <div class="page-screen podium-screen">
+        <h1>🏆 Podium</h1>
+        <p>Classement des meilleurs élèves</p>
+        <div class="podium-content">
+          <p>Page en développement...</p>
+        </div>
+      </div>
     `;
   }
 
   renderMusic() {
     this.app.innerHTML = `
-        <h1>Musique</h1>
+      <div class="page-screen music-screen">
+        <h1>🎵 Musique</h1>
+        <p>Découvrez nos leçons musicales</p>
+        <div class="music-content">
+          <p>Page en développement...</p>
+        </div>
+      </div>
     `;
   }
 
   renderMenu() {
     this.app.innerHTML = `
-        <h1>Menu</h1>
+      <div class="page-screen menu-screen">
+        <h1>☰ Menu</h1>
+        <p>Paramètres et options</p>
+        <div class="menu-content">
+          <p>Page en développement...</p>
+        </div>
+      </div>
     `;
   }
 }

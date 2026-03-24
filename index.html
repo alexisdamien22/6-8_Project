@@ -18,6 +18,7 @@
     <script>
       let view;
       let appModel;
+      let appController;
 
       document.addEventListener("DOMContentLoaded", () => {
         try {
@@ -29,7 +30,8 @@
             appModel = new AppModel();
             window.appModel = appModel;
             view = new AppView();
-            const app = new AppController(appModel, view);
+            appController = new AppController(appModel, view);
+            window.appController = appController;
             console.log("Système Six-Huit initialisé avec succès.");
           } else {
             console.error(
