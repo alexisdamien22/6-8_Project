@@ -44,7 +44,6 @@ class AppView {
     const joursFr = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
     let dayActuel = joursFr[new Date().getDay()];
 
-    // Le cycle de 5 positions type Duolingo
     const pattern = [0, 45, 25, -25, -45];
 
     for (let i = 0; i < childData.sessions.length; i++) {
@@ -100,5 +99,58 @@ class AppView {
         });
       }, 100);
     }
+  }
+
+  setupFooterNavigation() {
+    const footerIcons = document.querySelectorAll(".icon-footer");
+
+    if (footerIcons.length > 0) {
+      footerIcons[0].classList.add("active");
+    }
+
+    footerIcons.forEach((icon, index) => {
+      icon.addEventListener("click", () => {
+        footerIcons.forEach((i) => i.classList.remove("active"));
+        icon.classList.add("active");
+
+        const pages = ["home", "podium", "music", "menu"];
+        const currentPage = pages[index];
+
+        switch (currentPage) {
+          case "home":
+            const homeData = window.appModel?.getChildData();
+            if (homeData) this.renderHome(homeData);
+            break;
+          case "podium":
+            this.renderPodium();
+            break;
+          case "music":
+            this.renderMusic();
+            break;
+          case "menu":
+            this.renderMenu();
+            break;
+        }
+      });
+    });
+  }
+
+  renderPodium() {
+    this.app.innerHTML = `
+      <h1>Podium</h1>
+      
+    `;
+  }
+
+  renderMusic() {
+    this.app.innerHTML = `
+        <h1>Musique</h1>
+    `;
+  }
+
+  renderMenu() {
+    this.app.innerHTML = `
+        <h1>Menu</h1>
+    `;
   }
 }

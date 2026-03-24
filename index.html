@@ -7,20 +7,18 @@
     <link rel="stylesheet" href="/assets/css/style.css" />
   </head>
   <body>
-    <header class="main-header">
-      <div class="logo">Six-Huit</div>
-      <nav>
-        <button id="switch-profile">Changer de profil</button>
-      </nav>
-    </header>
-
+    <div id="header-placeholder"></div>
     <div id="app"></div>
+    <div id="footer-placeholder"></div>
 
     <script src="src/model/AppModel.js"></script>
     <script src="src/view/AppView.js"></script>
     <script src="src/controller/AppController.js"></script>
 
     <script>
+      let view;
+      let appModel;
+
       document.addEventListener("DOMContentLoaded", () => {
         try {
           if (
@@ -28,9 +26,10 @@
             typeof AppView !== "undefined" &&
             typeof AppController !== "undefined"
           ) {
-            const model = new AppModel();
-            const view = new AppView();
-            const app = new AppController(model, view);
+            appModel = new AppModel();
+            window.appModel = appModel;
+            view = new AppView();
+            const app = new AppController(appModel, view);
             console.log("Système Six-Huit initialisé avec succès.");
           } else {
             console.error(
@@ -41,6 +40,32 @@
           console.error("Erreur lors du lancement de l'application :", error);
         }
       });
+    </script>
+
+    <script>
+      async function loadPartial(id, url) {
+        const res = await fetch(url);
+        if (res.ok) {
+          document.getElementById(id).innerHTML = await res.text();
+          return true;
+        } else {
+          console.error("Erreur chargement partial", url, res.status);
+          return false;
+        }
+      }
+
+      async function initializeApp() {
+        await loadPartial("header-placeholder", "/src/view/header.html");
+        await loadPartial("footer-placeholder", "/src/view/footer.html");
+
+        setTimeout(() => {
+          if (typeof view !== "undefined" && view.setupFooterNavigation) {
+            view.setupFooterNavigation();
+          }
+        }, 100);
+      }
+
+      initializeApp();
     </script>
   </body>
 </html>
