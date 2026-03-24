@@ -6,23 +6,35 @@ class AppView {
 
   initEventListeners() {
     this.app.addEventListener("click", (e) => {
-      if (e.target.classList.contains("path-dot")) {
-        const container = e.target.closest(".path-button-container");
-        const popup = container.querySelector(".duo-popup");
+      const popupClicked = e.target.closest(".duo-popup");
 
+      if (popupClicked) {
+        e.stopImmediatePropagation();
+        if (e.target.classList.contains("start-btn")) {
+          console.log("Démarrage de la leçon !");
+        }
+        return;
+      }
+
+      if (e.target.classList.contains("path-dot")) {
+        const step = e.target.closest(".path-step");
+        const popup = step.querySelector(".duo-popup");
+
+        document
+          .querySelectorAll(".path-step")
+          .forEach((s) => (s.style.zIndex = "1"));
         document.querySelectorAll(".duo-popup").forEach((p) => {
           if (p !== popup) p.classList.remove("show");
         });
 
+        const isOpening = !popup.classList.contains("show");
         popup.classList.toggle("show");
-      } else if (!e.target.closest(".duo-popup")) {
+        step.style.zIndex = isOpening ? "999" : "1";
+      } else {
         document.querySelectorAll(".duo-popup.show").forEach((p) => {
           p.classList.remove("show");
+          p.closest(".path-step").style.zIndex = "1";
         });
-      }
-
-      if (e.target.classList.contains("start-btn")) {
-        console.log("Démarrage de la leçon !");
       }
     });
   }
@@ -32,12 +44,12 @@ class AppView {
     const joursFr = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
     let dayActuel = joursFr[new Date().getDay()];
 
+    // Le cycle de 5 positions type Duolingo
+    const pattern = [0, 45, 25, -25, -45];
+
     for (let i = 0; i < childData.sessions.length; i++) {
       let session = childData.sessions[i];
-      let offset = 0;
-      if (i % 4 === 1) offset = 40;
-      if (i % 4 === 2) offset = 0;
-      if (i % 4 === 3) offset = -40;
+      let offset = pattern[i % pattern.length];
 
       let mascotteHTML = "";
       let haloHTML = "";
@@ -48,19 +60,19 @@ class AppView {
       }
 
       pathHTML += `
-                <div class="path-step ${session.status}" style="transform: translateX(${offset}px)">
+                <div class="path-step ${session.status}" style="transform: translateX(${offset}px); z-index: 1;">
                     <div class="path-button-container">
                         ${haloHTML}
                         ${mascotteHTML}
                         <div class="path-dot-shadow"></div> 
                         <div class="path-dot"></div>
                         <div class="duo-popup">
+                          <div class="popup-arrow"></div>
                           <div class="popup-content">
                               <h3>Leçon ${i + 1}</h3>
                               <p>Prêt pour un défi ?</p>
                               <button class="start-btn">COMMENCER</button>
                           </div>
-                          <div class="popup-arrow"></div> 
                         </div>    
                     </div>
                     <span class="path-label">${session.day}</span>
