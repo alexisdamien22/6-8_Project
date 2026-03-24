@@ -8,11 +8,11 @@
 
   --color-done: #58cc02;
   --color-todo: #fda20c;
-  --color-waiting: #e5e5e5;
+  --color-waiting: #7e7d7d;
 
   --color-done-shadow: #46a302;
   --color-todo-shadow: #ce830a;
-  --color-waiting-shadow: #afafaf;
+  --color-waiting-shadow: #5d5d5d;
 
   --color-halo-border: #3a424c;
   --color-halo-bg: rgba(255, 255, 255, 0);
