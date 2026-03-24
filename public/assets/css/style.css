@@ -87,6 +87,17 @@ body {
   cursor: pointer;
   transition: transform 0.1s;
 }
+.path-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/other/light.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 .done .path-dot {
   background-color: var(--color-done);
@@ -145,15 +156,19 @@ body {
   }
 }
 
-.path-button-container:active .path-dot {
+.path-button-container:active .path-dot,
+.path-button-container.pressed .path-dot,
+.path-dot:active {
   transform: translateY(8px);
 }
 
-.path-button-container:active .mascotte-path {
+.path-button-container:active .mascotte-path,
+.path-button-container.pressed .mascotte-path {
   transform: translateX(-50%) translateY(8px);
 }
 
-.path-button-container:active .today-halo {
+.path-button-container:active .today-halo,
+.path-button-container.pressed .today-halo {
   margin-top: 4px;
 }
 
@@ -234,11 +249,46 @@ body {
   background-color: var(--color-todo);
   color: white;
   border: none;
-  padding: 8px 15px;
+  padding: 8px 30px 8px 15px;
   border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 0 var(--color-todo-shadow);
+  position: relative;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
+.start-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-todo-shadow);
+}
+
+.start-btn::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-image: url("/assets/img/icons/light.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.start-btn:hover::before {
+  transform: translateY(-50%) scale(1.2);
+  opacity: 1;
+}
+
+.start-btn:hover {
+  box-shadow: 0 3px 0 var(--color-todo-shadow);
 }
 .main-footer {
   display: flex;

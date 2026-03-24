@@ -37,6 +37,27 @@ class AppView {
         });
       }
     });
+
+    this.app.addEventListener("pointerdown", (e) => {
+      const button = e.target.closest(".path-button-container");
+      if (button) {
+        button.classList.add("pressed");
+      }
+    });
+
+    this.app.addEventListener("pointerup", (e) => {
+      const button = e.target.closest(".path-button-container");
+      if (button) {
+        button.classList.remove("pressed");
+      }
+    });
+
+    this.app.addEventListener("pointercancel", (e) => {
+      const button = e.target.closest(".path-button-container");
+      if (button) {
+        button.classList.remove("pressed");
+      }
+    });
   }
 
   renderHome(childData) {
@@ -54,7 +75,7 @@ class AppView {
       let haloHTML = "";
 
       if (session.day === dayActuel) {
-        mascotteHTML = `<img src="/assets/img/mascottes/camelion.png" class="mascotte-path">`;
+        mascotteHTML = `<img src="/assets/img/mascottes/camelion.png" class="mascotte-path" alt="Mascotte">`;
         haloHTML = `<div class="today-halo"></div>`;
       }
 
