@@ -49,10 +49,8 @@
         const res = await fetch(url);
         if (res.ok) {
           document.getElementById(id).innerHTML = await res.text();
-          return true;
         } else {
           console.error("Erreur chargement partial", url, res.status);
-          return false;
         }
       }
 
