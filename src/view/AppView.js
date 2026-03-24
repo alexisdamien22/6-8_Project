@@ -39,6 +39,10 @@ class AppView {
     });
 
     this.app.addEventListener("pointerdown", (e) => {
+      if (e.target.closest(".duo-popup")) {
+        return;
+      }
+
       const button = e.target.closest(".path-button-container");
       if (button) {
         button.classList.add("pressed");
@@ -143,9 +147,14 @@ class AppView {
 
   setupFooterNavigation() {
     const footerIcons = document.querySelectorAll(".icon-footer");
+    const pages = ["home", "podium", "music", "menu"];
+
+    const hash = window.location.hash.substring(1);
+    let activeIndex = pages.indexOf(hash);
+    if (activeIndex === -1) activeIndex = 0;
 
     if (footerIcons.length > 0) {
-      footerIcons[0].classList.add("active");
+      footerIcons[activeIndex].classList.add("active");
     }
 
     footerIcons.forEach((icon, index) => {
@@ -153,7 +162,6 @@ class AppView {
         footerIcons.forEach((i) => i.classList.remove("active"));
         icon.classList.add("active");
 
-        const pages = ["home", "podium", "music", "menu"];
         const currentPage = pages[index];
 
         if (window.appController) {

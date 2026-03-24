@@ -92,11 +92,15 @@ body {
   height: 10px;
   background-color: inherit;
   z-index: -1;
-  transition: opacity 0.1s;
+  transition:
+    height 0.1s,
+    top 0.1s;
 }
 
-.path-button-container:active .path-dot-shadow::before {
-  opacity: 0;
+.path-button-container:active .path-dot-shadow::before,
+.path-button-container.pressed .path-dot-shadow::before {
+  height: 2px;
+  top: 28px;
 }
 
 .path-dot-shadow {
@@ -238,11 +242,19 @@ body {
   pointer-events: auto;
   box-sizing: border-box;
 }
-.path-button-container:has(.duo-popup.show):active .path-dot {
+
+.path-button-container:has(.duo-popup:hover) .path-dot,
+.path-button-container:has(.duo-popup:active) .path-dot {
   transform: none;
 }
-.path-button-container:has(.duo-popup.show):active .mascotte-path {
+.path-button-container:has(.duo-popup:hover) .mascotte-path,
+.path-button-container:has(.duo-popup:active) .mascotte-path {
   transform: translateX(-50%);
+}
+.path-button-container:has(.duo-popup:hover) .path-dot-shadow::before,
+.path-button-container:has(.duo-popup:active) .path-dot-shadow::before {
+  height: 10px;
+  top: 20px;
 }
 .duo-popup.show {
   opacity: 1;
