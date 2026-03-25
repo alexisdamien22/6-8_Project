@@ -12,6 +12,7 @@ const urlsToCache = [
   "/assets/img/icons/podium.png",
   "/assets/img/icons/music.png",
   "/assets/img/icons/menu.png",
+  "/assets/img/icons/app-icon-86.png",
   "/assets/img/mascottes/camelion.png",
   "/manifest.json",
 ];

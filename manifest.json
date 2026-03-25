@@ -10,14 +10,8 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/assets/img/icons/home.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icons/home.png",
-      "sizes": "512x512",
+      "src": "/assets/img/icons/app-icon-86.png",
+      "sizes": "86x86",
       "type": "image/png",
       "purpose": "any maskable"
     }
