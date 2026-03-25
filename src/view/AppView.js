@@ -22,6 +22,13 @@ class AppView {
       if (e.target.closest(".parametre")) {
         if (window.appController) {
           window.appController.navigateToPage("settings");
+
+          const footerIcons = document.querySelectorAll(".icon-footer");
+          if (footerIcons.length > 3) {
+            footerIcons.forEach((i) => i.classList.remove("active"));
+            footerIcons[3].classList.add("active");
+            this.updateFooterSlider(3, true);
+          }
         }
       }
     });
@@ -88,7 +95,6 @@ class AppView {
 
     this.app.addEventListener("pointerup", releaseButton);
     this.app.addEventListener("pointercancel", releaseButton);
-    // Sécurité supplémentaire si la souris sort complètement de la fenêtre
     this.app.addEventListener("pointerleave", releaseButton);
   }
 
@@ -175,20 +181,41 @@ class AppView {
 
   setupFooterNavigation() {
     const footerIcons = document.querySelectorAll(".icon-footer");
+    const footer = document.querySelector(".main-footer");
     const pages = ["home", "podium", "music", "menu"];
 
+    if (!footer || footerIcons.length === 0) return;
+
+    let slider = footer.querySelector(".footer-slider");
+    if (!slider) {
+      slider = document.createElement("div");
+      slider.className = "footer-slider";
+      footer.appendChild(slider);
+    }
+
     const hash = window.location.hash.substring(1);
-    let activeIndex = pages.indexOf(hash);
+    let targetPage = hash === "settings" ? "menu" : hash;
+    let activeIndex = pages.indexOf(targetPage);
     if (activeIndex === -1) activeIndex = 0;
 
-    if (footerIcons.length > 0) {
-      footerIcons[activeIndex].classList.add("active");
-    }
+    footerIcons.forEach((i) => i.classList.remove("active"));
+    footerIcons[activeIndex].classList.add("active");
+
+    setTimeout(() => this.updateFooterSlider(activeIndex, false), 50);
+
+    window.addEventListener("resize", () => {
+      const activeIdx = Array.from(footerIcons).findIndex((i) =>
+        i.classList.contains("active"),
+      );
+      if (activeIdx !== -1) this.updateFooterSlider(activeIdx, false);
+    });
 
     footerIcons.forEach((icon, index) => {
       icon.addEventListener("click", () => {
         footerIcons.forEach((i) => i.classList.remove("active"));
         icon.classList.add("active");
+
+        this.updateFooterSlider(index, true);
 
         const currentPage = pages[index];
 
@@ -196,6 +223,21 @@ class AppView {
           window.appController.navigateToPage(currentPage);
         }
       });
+    });
+  }
+
+  updateFooterSlider(index, animated = true) {
+    const footerIcons = document.querySelectorAll(".icon-footer");
+    const slider = document.querySelector(".footer-slider");
+    if (!slider || !footerIcons[index]) return;
+
+    const icon = footerIcons[index];
+    requestAnimationFrame(() => {
+      slider.style.transition = animated
+        ? "left 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+        : "none";
+      slider.style.width = `${icon.offsetWidth}px`;
+      slider.style.left = `${icon.offsetLeft}px`;
     });
   }
 
