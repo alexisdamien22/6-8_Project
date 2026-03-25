@@ -170,12 +170,10 @@ class AppView {
   scrollToCurrentDay() {
     const currentElement = this.app.querySelector(".mascotte-path");
     if (currentElement) {
-      setTimeout(() => {
-        currentElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 100);
+      currentElement.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+      });
     }
   }
 
@@ -201,14 +199,19 @@ class AppView {
     footerIcons.forEach((i) => i.classList.remove("active"));
     footerIcons[activeIndex].classList.add("active");
 
-    setTimeout(() => this.updateFooterSlider(activeIndex, false), 50);
-
-    window.addEventListener("resize", () => {
+    const updateSliderPosition = () => {
       const activeIdx = Array.from(footerIcons).findIndex((i) =>
         i.classList.contains("active"),
       );
       if (activeIdx !== -1) this.updateFooterSlider(activeIdx, false);
-    });
+    };
+
+    setTimeout(updateSliderPosition, 50);
+    window.addEventListener("load", updateSliderPosition);
+    footerIcons.forEach((icon) =>
+      icon.addEventListener("load", updateSliderPosition),
+    );
+    window.addEventListener("resize", updateSliderPosition);
 
     footerIcons.forEach((icon, index) => {
       icon.addEventListener("click", () => {
@@ -234,10 +237,14 @@ class AppView {
     const icon = footerIcons[index];
     requestAnimationFrame(() => {
       slider.style.transition = animated
-        ? "left 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+        ? "left 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease"
         : "none";
       slider.style.width = `${icon.offsetWidth}px`;
       slider.style.left = `${icon.offsetLeft}px`;
+
+      if (icon.offsetWidth > 0) {
+        slider.style.opacity = "1";
+      }
     });
   }
 
