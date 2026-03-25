@@ -281,7 +281,15 @@ class AppView {
 
   initTheme() {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
+
+    if (savedTheme) {
+      if (savedTheme === "light") {
+        document.body.classList.add("light-mode");
+      }
+    } else if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: light)").matches
+    ) {
       document.body.classList.add("light-mode");
     }
   }
