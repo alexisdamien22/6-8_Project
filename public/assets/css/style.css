@@ -32,7 +32,7 @@ body.light-mode {
   --color-text-main: #20252b;
   --color-border-soft: rgba(0, 0, 0, 0.1);
   --color-bg-footer: #ffffff;
-  --color-border-light: #e1e4e8;
+  --color-border-light: #cacccf;
   --color-halo-border: #d0d7de;
   --color-staff-line: rgba(0, 0, 0, 0.15);
 
@@ -524,7 +524,6 @@ body {
 }
 
 .slider {
-  background-color: #2a3139;
   bottom: 0;
   cursor: pointer;
   left: 0;
@@ -550,7 +549,6 @@ body {
 
 input:checked + .slider {
   background-color: #58cc02;
-  border-color: #58cc02;
 }
 
 input:checked + .slider:before {

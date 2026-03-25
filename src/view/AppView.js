@@ -330,7 +330,9 @@ class AppView {
     const shouldShow = forceShow !== undefined ? forceShow : !isShowing;
 
     if (shouldShow) {
-      container.classList.add("show");
+      setTimeout(() => {
+        container.classList.add("show");
+      }, 0);
     } else {
       container.classList.remove("show");
 
