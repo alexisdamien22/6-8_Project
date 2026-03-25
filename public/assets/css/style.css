@@ -144,7 +144,7 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.5;
+  opacity: 0.2;
   pointer-events: none;
 }
 
@@ -367,7 +367,7 @@ body {
 
 .icon-footer {
   width: auto;
-  height: 70%;
+  height: 80%;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
@@ -375,8 +375,8 @@ body {
 }
 
 .icon-footer.active {
-  background-color: #2564eb39;
-  border: 2px solid #2255c4;
+  background-color: #769df01c;
+  border: 2px solid #7093df;
 }
 
 .main-header {
@@ -419,11 +419,32 @@ body {
 .swipe {
   height: 70%;
   aspect-ratio: 1;
-  background-image: url("../img/icons/swip.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  background-color: #f0f0f0;
   border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.swipe::before {
+  content: "";
+  position: absolute;
+  width: 90%;
+  height: 90%;
+
+  -webkit-mask-image: url("../img/icons/swip.png");
+  mask-image: url("../img/icons/swip.png");
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  background-color: var(--color-button);
 }
 .parametre {
   height: 70%;
