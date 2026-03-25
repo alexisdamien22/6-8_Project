@@ -2,9 +2,30 @@ class AppView {
   constructor() {
     this.app = document.getElementById("app");
     this.initEventListeners();
+    this.initTheme();
   }
 
   initEventListeners() {
+    document.addEventListener("change", (e) => {
+      if (e.target.id === "theme-checkbox") {
+        if (e.target.checked) {
+          document.body.classList.add("light-mode");
+          localStorage.setItem("theme", "light");
+        } else {
+          document.body.classList.remove("light-mode");
+          localStorage.setItem("theme", "dark");
+        }
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".parametre")) {
+        if (window.appController) {
+          window.appController.navigateToPage("settings");
+        }
+      }
+    });
+
     this.app.addEventListener("click", (e) => {
       const popupClicked = e.target.closest(".duo-popup");
 
@@ -194,5 +215,32 @@ class AppView {
     this.app.innerHTML = `
       <h1>Menu</h1>
     `;
+  }
+
+  renderSettings() {
+    const isLightMode = document.body.classList.contains("light-mode");
+
+    this.app.innerHTML = `
+      <div style="padding-top: 12vh; text-align: center; color: var(--color-text-main);">
+        <h1>Paramètres</h1>
+        <p>Gérez vos options ici.</p>
+        
+        <div class="theme-switch-wrapper">
+          <span>Sombre</span>
+          <label class="theme-switch" for="theme-checkbox">
+            <input type="checkbox" id="theme-checkbox" ${isLightMode ? "checked" : ""} />
+            <div class="slider"></div>
+          </label>
+          <span>Clair</span>
+        </div>
+      </div>
+    `;
+  }
+
+  initTheme() {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.body.classList.add("light-mode");
+    }
   }
 }
