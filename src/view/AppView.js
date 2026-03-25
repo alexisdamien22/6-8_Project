@@ -170,12 +170,10 @@ class AppView {
   scrollToCurrentDay() {
     const currentElement = this.app.querySelector(".mascotte-path");
     if (currentElement) {
-      setTimeout(() => {
-        currentElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 100);
+      currentElement.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+      });
     }
   }
 
