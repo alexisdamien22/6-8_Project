@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --color-bg-main: #20252b;
   --color-text-main: #ffffff;
   --color-border-soft: rgba(0, 0, 0, 0.1);
@@ -22,6 +23,7 @@
 }
 
 body.light-mode {
+  color-scheme: light;
   --color-bg-main: #f0f4f8;
   --color-text-main: #20252b;
   --color-border-soft: rgba(0, 0, 0, 0.1);
