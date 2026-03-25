@@ -39,14 +39,11 @@ class AppController {
       case "music":
         this.view.renderMusic();
         break;
-      case "menu":
-        this.view.renderMenu();
-        break;
       case "settings":
         this.view.renderSettings();
         break;
       case "profil":
-        this.view.renderSettings();
+        this.view.renderProfil();
         break;
     }
   }
