@@ -9,11 +9,11 @@
 
   --color-done: #58cc02;
   --color-todo: #fda20c;
-  --color-waiting: #7e7d7d;
+  --color-nothing: #7e7d7d;
 
   --color-done-shadow: #46a302;
   --color-todo-shadow: #ce830a;
-  --color-waiting-shadow: #5d5d5d;
+  --color-nothing-shadow: #5d5d5d;
 
   --color-halo-border: #3a424c;
   --color-halo-bg: rgba(255, 255, 255, 0);
@@ -173,11 +173,11 @@ body {
   background-color: var(--color-todo-shadow);
 }
 
-.waiting .path-dot {
-  background-color: var(--color-waiting);
+.nothing .path-dot {
+  background-color: var(--color-nothing);
 }
-.waiting .path-dot-shadow {
-  background-color: var(--color-waiting-shadow);
+.nothing .path-dot-shadow {
+  background-color: var(--color-nothing-shadow);
 }
 
 .today-halo {
@@ -386,10 +386,11 @@ body {
   z-index: 1;
   pointer-events: none;
   box-sizing: border-box;
+  opacity: 0;
 }
 
 .icon-footer {
-  width: auto;
+  aspect-ratio: 1;
   height: 80%;
   padding: 8px;
   border-radius: 8px;
