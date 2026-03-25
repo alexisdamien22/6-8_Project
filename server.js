@@ -13,6 +13,13 @@ app.get("/sw.js", (req, res) => {
   res.sendFile(path.join(__dirname, "sw.js"));
 });
 
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/src", express.static(path.join(__dirname, "src")));
 
