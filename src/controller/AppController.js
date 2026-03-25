@@ -12,7 +12,14 @@ class AppController {
 
   getCurrentPageFromHash() {
     const hash = window.location.hash.substring(1);
-    const validPages = ["home", "podium", "music", "menu", "settings"];
+    const validPages = [
+      "home",
+      "podium",
+      "music",
+      "menu",
+      "settings",
+      "profil",
+    ];
     return validPages.includes(hash) ? hash : "home";
   }
 
@@ -32,11 +39,11 @@ class AppController {
       case "music":
         this.view.renderMusic();
         break;
-      case "menu":
-        this.view.renderMenu();
-        break;
       case "settings":
         this.view.renderSettings();
+        break;
+      case "profil":
+        this.view.renderProfil();
         break;
     }
   }

@@ -19,6 +19,20 @@ class AppView {
     });
 
     document.addEventListener("click", (e) => {
+      const bottomMenu = document.getElementById("bottom-menu-container");
+      if (bottomMenu && bottomMenu.classList.contains("show")) {
+        const clickedFooterIcon = e.target.closest(".icon-footer");
+        const footerIcons = Array.from(
+          document.querySelectorAll(".icon-footer"),
+        );
+        const isMenuIcon =
+          clickedFooterIcon && footerIcons.indexOf(clickedFooterIcon) === 3;
+
+        if (!e.target.closest(".bottom-menu-sheet") && !isMenuIcon) {
+          this.toggleBottomMenu(false);
+        }
+      }
+
       if (e.target.closest(".parametre")) {
         if (window.appController) {
           window.appController.navigateToPage("settings");
@@ -192,7 +206,7 @@ class AppView {
     }
 
     const hash = window.location.hash.substring(1);
-    let targetPage = hash === "settings" ? "menu" : hash;
+    let targetPage = hash === "settings" || hash === "profil" ? "menu" : hash;
     let activeIndex = pages.indexOf(targetPage);
     if (activeIndex === -1) activeIndex = 0;
 
@@ -217,10 +231,17 @@ class AppView {
       icon.addEventListener("click", () => {
         footerIcons.forEach((i) => i.classList.remove("active"));
         icon.classList.add("active");
-
         this.updateFooterSlider(index, true);
-
         const currentPage = pages[index];
+
+        if (currentPage === "menu") {
+          const container = document.getElementById("bottom-menu-container");
+          const isShowing = container && container.classList.contains("show");
+          this.toggleBottomMenu(!isShowing);
+          return;
+        } else {
+          this.toggleBottomMenu(false, true);
+        }
 
         if (window.appController) {
           window.appController.navigateToPage(currentPage);
@@ -248,6 +269,89 @@ class AppView {
     });
   }
 
+  createBottomMenu() {
+    if (document.getElementById("bottom-menu-container")) return;
+
+    const menuHTML = `
+        <div id="bottom-menu-container" class="bottom-menu-container">
+            <div class="bottom-menu-overlay"></div>
+            <div class="bottom-menu-sheet">
+                <div class="bottom-menu-item" id="btn-compte">
+                    
+                    <span>Compte</span>
+                </div>
+                <div class="bottom-menu-item" id="btn-parametre-menu">
+                   
+                    <span>Paramètres</span>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", menuHTML);
+
+    const container = document.getElementById("bottom-menu-container");
+    const overlay = container.querySelector(".bottom-menu-overlay");
+    const btnParametre = container.querySelector("#btn-parametre-menu");
+    const btnCompte = container.querySelector("#btn-compte");
+
+    overlay.addEventListener("click", () => this.toggleBottomMenu(false));
+
+    btnParametre.addEventListener("click", () => {
+      this.toggleBottomMenu(false, true);
+      if (window.appController) {
+        window.appController.navigateToPage("settings");
+        const footerIcons = document.querySelectorAll(".icon-footer");
+        if (footerIcons.length > 3) {
+          footerIcons.forEach((i) => i.classList.remove("active"));
+          footerIcons[3].classList.add("active");
+          this.updateFooterSlider(3, true);
+        }
+      }
+    });
+
+    btnCompte.addEventListener("click", () => {
+      this.toggleBottomMenu(false, true);
+      if (window.appController) {
+        window.appController.navigateToPage("profil");
+        const footerIcons = document.querySelectorAll(".icon-footer");
+        if (footerIcons.length > 3) {
+          footerIcons.forEach((i) => i.classList.remove("active"));
+          footerIcons[3].classList.add("active");
+          this.updateFooterSlider(3, true);
+        }
+      }
+    });
+  }
+
+  toggleBottomMenu(forceShow, skipSliderReset = false) {
+    this.createBottomMenu();
+    const container = document.getElementById("bottom-menu-container");
+    const isShowing = container.classList.contains("show");
+    const shouldShow = forceShow !== undefined ? forceShow : !isShowing;
+
+    if (shouldShow) {
+      container.classList.add("show");
+    } else {
+      container.classList.remove("show");
+
+      if (!skipSliderReset) {
+        const hash = window.location.hash.substring(1) || "home";
+        let targetPage =
+          hash === "settings" || hash === "profil" ? "menu" : hash;
+        const pages = ["home", "podium", "music", "menu"];
+        let activeIndex =
+          pages.indexOf(targetPage) !== -1 ? pages.indexOf(targetPage) : 0;
+
+        const footerIcons = document.querySelectorAll(".icon-footer");
+        if (footerIcons[activeIndex]) {
+          footerIcons.forEach((i) => i.classList.remove("active"));
+          footerIcons[activeIndex].classList.add("active");
+          this.updateFooterSlider(activeIndex, true);
+        }
+      }
+    }
+  }
+
   renderPodium() {
     this.app.innerHTML = `
       <h1>Podium</h1>    
@@ -259,11 +363,38 @@ class AppView {
       <h1>Musique</h1>
     `;
   }
-
   renderMenu() {
     this.app.innerHTML = `
       <h1>Menu</h1>
     `;
+  }
+  renderProfil() {
+    this.app.innerHTML = `
+    <div class="profile-page">
+      
+        <img class="profil-img" src="/assets/img/other/base-profil.jpg" alt="Profil">
+
+      <p class="profil-name">Shrek Fée</p>
+
+      <div class="stats-row">
+        <div class="card">
+          <h3>Récap</h3>
+
+        </div>
+        <div class="card">
+          <h3>Meilleurs Amis</h3>
+
+        </div>
+      </div>
+
+      <div class="history-section">
+        <h3>Historique des séances</h3>
+ 
+      </div>
+
+      
+    </div>
+  `;
   }
 
   renderSettings() {
