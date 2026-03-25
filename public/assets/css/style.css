@@ -136,7 +136,7 @@ body {
   cursor: pointer;
   transition: transform 0.05s;
 }
-.path-dot::before {
+.done .path-dot::before {
   content: "";
   position: absolute;
   inset: 0;
