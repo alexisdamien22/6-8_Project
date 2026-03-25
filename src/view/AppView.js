@@ -4,6 +4,22 @@ class AppView {
     this.initEventListeners();
   }
 
+  async loadPartial(url) {
+    const res = await fetch(url);
+    return await res.text();
+  }
+
+  async renderLayout() {
+    const headerHTML = await this.loadPartial("/src/view/header.html");
+    const footerHTML = await this.loadPartial("/src/view/footer.html");
+    this.app.innerHTML = `
+      ${headerHTML}
+      <main id="main-content"></main>
+      ${footerHTML}
+    `;
+    this.mainContent = document.getElementById("main-content");
+  }
+
   initEventListeners() {
     this.app.addEventListener("click", (e) => {
       const popupClicked = e.target.closest(".duo-popup");
@@ -67,11 +83,11 @@ class AppView {
 
     this.app.addEventListener("pointerup", releaseButton);
     this.app.addEventListener("pointercancel", releaseButton);
-    // Sécurité supplémentaire si la souris sort complètement de la fenêtre
     this.app.addEventListener("pointerleave", releaseButton);
   }
 
-  renderHome(childData) {
+  async renderHome(childData) {
+    await this.renderLayout();
     let pathHTML = "";
     const joursFr = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
     let dayActuel = joursFr[new Date().getDay()];
@@ -129,19 +145,30 @@ class AppView {
                 </div>`;
     }
 
-    this.app.innerHTML = `
+    this.mainContent.innerHTML = `
             <div class="home-screen">
-                <div class="path-container">
-                    ${pathHTML}
+                <div class="lesson-overlay">
+                    <div class="path-container">
+                        <div id="main-scroll-container">
+                            <svg id="staff-svg"></svg>
+                            <div id="notes-layer"></div>
+                        </div>
+                        ${pathHTML}
+                    </div>
                 </div>
             </div>
         `;
 
     this.scrollToCurrentDay();
+    this.setupFooterNavigation();
+
+    if (window.initPartition) {
+      window.initPartition();
+    }
   }
 
   scrollToCurrentDay() {
-    const currentElement = this.app.querySelector(".mascotte-path");
+    const currentElement = this.mainContent.querySelector(".mascotte-path");
     if (currentElement) {
       setTimeout(() => {
         currentElement.scrollIntoView({
@@ -178,21 +205,27 @@ class AppView {
     });
   }
 
-  renderPodium() {
-    this.app.innerHTML = `
-      <h1>Podium</h1>    
+  async renderPodium() {
+    await this.renderLayout();
+    this.mainContent.innerHTML = `
+      <h1>Podium</h1>
     `;
+    this.setupFooterNavigation();
   }
 
-  renderMusic() {
-    this.app.innerHTML = `
+  async renderMusic() {
+    await this.renderLayout();
+    this.mainContent.innerHTML = `
       <h1>Musique</h1>
     `;
+    this.setupFooterNavigation();
   }
 
-  renderMenu() {
-    this.app.innerHTML = `
+  async renderMenu() {
+    await this.renderLayout();
+    this.mainContent.innerHTML = `
       <h1>Menu</h1>
     `;
+    this.setupFooterNavigation();
   }
 }

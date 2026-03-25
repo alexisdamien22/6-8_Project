@@ -1,18 +1,9 @@
-const CACHE_NAME = "six-huit-v1";
+const CACHE_NAME = "partition-cartoon-v1";
 const urlsToCache = [
   "/",
   "/index.html",
-  "/src/model/AppModel.js",
-  "/src/view/AppView.js",
-  "/src/controller/AppController.js",
-  "/src/view/header.html",
-  "/src/view/footer.html",
-  "/assets/css/style.css",
-  "/assets/img/icons/home.png",
-  "/assets/img/icons/podium.png",
-  "/assets/img/icons/music.png",
-  "/assets/img/icons/menu.png",
-  "/assets/img/mascottes/camelion.png",
+  "/style.css",
+  "/script.js",
   "/manifest.json",
 ];
 
@@ -28,7 +19,12 @@ self.addEventListener("fetch", (event) => {
       if (response) {
         return response;
       }
-      return fetch(event.request);
+      return fetch(event.request).catch(() => {
+        return new Response("Resource not available", {
+          status: 404,
+          statusText: "Not Found",
+        });
+      });
     }),
   );
 });

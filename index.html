@@ -3,21 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Six-Huit | Apprentissage Musical</title>
     <link rel="stylesheet" href="/assets/css/style.css" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/assets/img/icons/home.png" />
-    <meta name="theme-color" content="#2563eb" />
+    <title>Six-Huit Application</title>
   </head>
   <body>
-    <div id="header-placeholder"></div>
     <div id="app"></div>
-    <div id="footer-placeholder"></div>
-
-    <script src="src/model/AppModel.js"></script>
-    <script src="src/view/AppView.js"></script>
-    <script src="src/controller/AppController.js"></script>
-
+    <script src="/src/model/AppModel.js"></script>
+    <script src="/src/view/AppView.js"></script>
+    <script src="/src/controller/AppController.js"></script>
+    <script src="/script.js"></script>
     <script>
       let view;
       let appModel;
@@ -45,53 +39,6 @@
           console.error("Erreur lors du lancement de l'application :", error);
         }
       });
-    </script>
-
-    <script>
-      async function loadPartial(id, url) {
-        const res = await fetch(url);
-        if (res.ok) {
-          document.getElementById(id).innerHTML = await res.text();
-        } else {
-          console.error("Erreur chargement partial", url, res.status);
-        }
-      }
-
-      async function initializeApp() {
-        await loadPartial("header-placeholder", "/src/view/header.html");
-        await loadPartial("footer-placeholder", "/src/view/footer.html");
-
-        setTimeout(() => {
-          if (typeof view !== "undefined" && view.setupFooterNavigation) {
-            view.setupFooterNavigation();
-          }
-        }, 100);
-      }
-
-      initializeApp();
-    </script>
-
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js", {
-              scope: "/",
-            })
-            .then((registration) => {
-              console.log(
-                "Service Worker enregistré avec succès:",
-                registration.scope,
-              );
-            })
-            .catch((error) => {
-              console.log(
-                "Échec de l'enregistrement du Service Worker:",
-                error,
-              );
-            });
-        });
-      }
     </script>
   </body>
 </html>
