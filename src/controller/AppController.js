@@ -19,11 +19,17 @@ export class AppController {
       "menu",
       "settings",
       "profil",
+      "createAccount",
     ];
     return validPages.includes(hash) ? hash : "home";
   }
 
   navigateToPage(pageName) {
+    if (!this.model.isLoggedIn() && pageName !== "createAccount") {
+      this.navigateToPage("createAccount");
+      return;
+    }
+
     this.updateHash(pageName);
 
     switch (pageName) {
@@ -44,6 +50,9 @@ export class AppController {
         break;
       case "profil":
         this.view.renderProfil();
+        break;
+      case "createAccount":
+        this.view.renderCreateAccount();
         break;
     }
   }

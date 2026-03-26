@@ -234,13 +234,52 @@ export const CreateAccountPage = {
   },
 
   afterRender() {
-    document.getElementById("ca-btn-next")?.addEventListener("click", () => {
+    const btnNext = document.getElementById("ca-btn-next");
+    const btnBack = document.getElementById("ca-back");
+    const btnStart = document.getElementById("ca-btn-start");
+
+    // --- BOUTON SUIVANT / TERMINÉ ---
+    btnNext?.addEventListener("click", async () => {
       if (!isStepValid(_step)) return;
-      _step = _step < TOTAL ? _step + 1 : 8;
-      window.appController?.navigateToPage("createAccount");
+
+      // Si on est à la dernière étape (7), on enregistre en BDD
+      if (_step === TOTAL) {
+        btnNext.disabled = true;
+        btnNext.textContent = "Chargement...";
+
+        try {
+          const response = await fetch("/api/signup/child", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(_state),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            // On sauvegarde l'ID de l'enfant pour créer le compte adulte après
+            localStorage.setItem("currentChildId", result.childId);
+            _step = 8; // Passage à l'écran de succès
+            window.appController?.navigateToPage("createAccount");
+          } else {
+            alert("Erreur: " + result.error);
+            btnNext.disabled = false;
+            btnNext.textContent = "Terminé !";
+          }
+        } catch (err) {
+          console.error("Erreur réseau:", err);
+          alert("Impossible de joindre le serveur.");
+          btnNext.disabled = false;
+        }
+      } else {
+        // Sinon, on avance simplement d'une étape
+        _step++;
+        window.appController?.navigateToPage("createAccount");
+      }
     });
 
-    document.getElementById("ca-back")?.addEventListener("click", () => {
+    // --- BOUTON RETOUR ---
+    btnBack?.addEventListener("click", () => {
       if (_step > 1) {
         _step--;
         window.appController?.navigateToPage("createAccount");
@@ -248,17 +287,24 @@ export const CreateAccountPage = {
     });
 
     document.getElementById("ca-btn-start")?.addEventListener("click", () => {
+      window.appController?.model.login(); // Enregistre la connexion
       window.appController?.navigateToPage("home");
     });
 
+    btnStart?.addEventListener("click", () => {
+      // C'est ici qu'on redirige vers la création du compte ADULTE
+      window.appController?.navigateToPage("createAdultAccount");
+    });
+    // --- FONCTIONS GLOBALES (Window) ---
+    // On les définit une seule fois proprement
     window.__ca_input = (key, value) => {
       _state[key] = value;
-      const btn = document.getElementById("ca-btn-next");
-      if (btn) btn.disabled = !isStepValid(_step);
+      if (btnNext) btnNext.disabled = !isStepValid(_step);
     };
 
     window.__ca_pick = (key, value) => {
       _state[key] = value;
+      // Pour les sélections (instruments/mascottes), on rafraîchit la page pour montrer le "sel" (sélectionné)
       window.appController?.navigateToPage("createAccount");
     };
 
