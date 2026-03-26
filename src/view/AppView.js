@@ -99,7 +99,7 @@ class AppView {
         button.classList.add("pressed");
         try {
           button.setPointerCapture(e.pointerId);
-        } catch (err) {}
+        } catch (err) { }
       }
     });
 
@@ -111,7 +111,7 @@ class AppView {
           if (e && e.pointerId) {
             try {
               btn.releasePointerCapture(e.pointerId);
-            } catch (err) {}
+            } catch (err) { }
           }
         });
     };
@@ -122,70 +122,110 @@ class AppView {
   }
 
   renderHome(childData) {
-    let pathHTML = "";
-    const joursFr = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-    let dayActuel = joursFr[new Date().getDay()];
+    this.app.textContent = "";
 
+    const joursFr = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+    const dayActuel = joursFr[new Date().getDay()];
     const pattern = [0, 45, 25, -25, -45];
 
-    for (let i = 0; i < childData.sessions.length; i++) {
-      let session = childData.sessions[i];
-      let offset = pattern[i % pattern.length];
+    const homeScreen = document.createElement("div");
+    homeScreen.className = "home-screen";
 
-      let mascotteHTML = "";
-      let haloHTML = "";
-      let popupContent = "";
-      let lockedClass = "";
+    const pathContainer = document.createElement("div");
+    pathContainer.className = "path-container";
 
-      if (session.day === dayActuel) {
-        mascotteHTML = `<img src="/assets/img/mascottes/camelion.png" class="mascotte-path" alt="Mascotte">`;
-        haloHTML = `<div class="today-halo"></div>`;
+    childData.sessions.forEach((session, i) => {
+      const offset = pattern[i % pattern.length];
+
+      const step = document.createElement("div");
+      step.className = `path-step ${session.status}`;
+      step.style.transform = `translateX(${offset}px)`;
+      step.style.zIndex = "1";
+
+      if (session.status !== "done" && session.day !== dayActuel) {
+        step.classList.add("is-locked");
       }
+
+      const btnContainer = document.createElement("div");
+      btnContainer.className = "path-button-container";
+
       if (session.day === dayActuel) {
-        popupContent = `
-                  <h3>Leçon ${i + 1}</h3>
-                  <p>Prêt pour un défi ?</p>
-                  <button class="start-btn">COMMENCER</button>
-              `;
+        const halo = document.createElement("div");
+        halo.className = "today-halo";
+        btnContainer.appendChild(halo);
+
+        const mascotte = document.createElement("img");
+        mascotte.src = "/assets/img/mascottes/camelion.png";
+        mascotte.className = "mascotte-path";
+        mascotte.alt = "Mascotte";
+        btnContainer.appendChild(mascotte);
+      }
+
+      const shadow = document.createElement("div");
+      shadow.className = "path-dot-shadow";
+
+      const dot = document.createElement("div");
+      dot.className = "path-dot";
+
+      btnContainer.appendChild(shadow);
+      btnContainer.appendChild(dot);
+
+      const popup = document.createElement("div");
+      popup.className = "duo-popup";
+
+      const arrow = document.createElement("div");
+      arrow.className = "popup-arrow";
+      popup.appendChild(arrow);
+
+      const title = document.createElement("h3");
+      title.textContent = `Leçon ${i + 1}`;
+      popup.appendChild(title);
+
+      const text = document.createElement("p");
+
+      if (session.day === dayActuel) {
+        text.textContent = "Prêt pour un défi ?";
+        popup.appendChild(text);
+
+        const btn = document.createElement("button");
+        btn.className = "start-btn";
+        btn.textContent = "COMMENCER";
+        popup.appendChild(btn);
+
       } else if (session.status === "done") {
-        popupContent = `
-                  <h3>Leçon ${i + 1}</h3>
-                  <p>Bravo ! Tu as validé cette séance.</p>
-              `;
+        text.textContent = "Bravo ! Tu as validé cette séance.";
+        popup.appendChild(text);
+
       } else {
-        lockedClass = "is-locked";
-        popupContent = `
-                  <h3>Leçon ${i + 1}</h3>
-                  <p>Patience... cette leçon n'est pas encore disponible.</p>
-                  <button class="start-btn disabled" disabled>
-                      <span class="icon-lock">🔒</span> BLOQUÉ
-                  </button>
-              `;
+        text.textContent = "Patience... cette leçon n'est pas encore disponible.";
+        popup.appendChild(text);
+
+        const btn = document.createElement("button");
+        btn.className = "start-btn disabled";
+        btn.disabled = true;
+
+        const lock = document.createElement("span");
+        lock.className = "icon-lock";
+        lock.textContent = "🔒";
+
+        btn.appendChild(lock);
+        btn.append(" BLOQUÉ");
+        popup.appendChild(btn);
       }
 
-      pathHTML += `
-                <div class="path-step ${session.status} ${lockedClass}" style="transform: translateX(${offset}px); z-index: 1;">
-                    <div class="path-button-container">
-                        ${haloHTML}
-                        ${mascotteHTML}
-                        <div class="path-dot-shadow"></div> 
-                        <div class="path-dot"></div>
-                        <div class="duo-popup">
-                          <div class="popup-arrow"></div>
-                          ${popupContent}
-                        </div>    
-                    </div>
-                    <span class="path-label">${session.day}</span>
-                </div>`;
-    }
+      btnContainer.appendChild(popup);
 
-    this.app.innerHTML = `
-            <div class="home-screen">
-                <div class="path-container">
-                    ${pathHTML}
-                </div>
-            </div>
-        `;
+      const label = document.createElement("span");
+      label.className = "path-label";
+      label.textContent = session.day;
+
+      step.appendChild(btnContainer);
+      step.appendChild(label);
+      pathContainer.appendChild(step);
+    });
+
+    homeScreen.appendChild(pathContainer);
+    this.app.appendChild(homeScreen);
 
     this.scrollToCurrentDay();
   }
@@ -281,56 +321,69 @@ class AppView {
   createBottomMenu() {
     if (document.getElementById("bottom-menu-container")) return;
 
-    const menuHTML = `
-        <div id="bottom-menu-container" class="bottom-menu-container">
-            <div class="bottom-menu-overlay"></div>
-            <div class="bottom-menu-sheet">
-                <div class="bottom-menu-item" id="btn-compte">
-                    
-                    <span>Compte</span>
-                </div>
-                <div class="bottom-menu-item" id="btn-parametre-menu">
-                   
-                    <span>Paramètres</span>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML("beforeend", menuHTML);
+    const container = document.createElement("div");
+    container.id = "bottom-menu-container";
+    container.className = "bottom-menu-container";
 
-    const container = document.getElementById("bottom-menu-container");
-    const overlay = container.querySelector(".bottom-menu-overlay");
-    const btnParametre = container.querySelector("#btn-parametre-menu");
-    const btnCompte = container.querySelector("#btn-compte");
+    const overlay = document.createElement("div");
+    overlay.className = "bottom-menu-overlay";
+
+    const sheet = document.createElement("div");
+    sheet.className = "bottom-menu-sheet";
+
+    const itemCompte = document.createElement("div");
+    itemCompte.className = "bottom-menu-item";
+    itemCompte.id = "btn-compte";
+
+    const spanCompte = document.createElement("span");
+    spanCompte.textContent = "Compte";
+    itemCompte.appendChild(spanCompte);
+
+    const itemParam = document.createElement("div");
+    itemParam.className = "bottom-menu-item";
+    itemParam.id = "btn-parametre-menu";
+
+    const spanParam = document.createElement("span");
+    spanParam.textContent = "Paramètres";
+    itemParam.appendChild(spanParam);
+
+    sheet.appendChild(itemCompte);
+    sheet.appendChild(itemParam);
+
+    container.appendChild(overlay);
+    container.appendChild(sheet);
+
+    document.body.appendChild(container);
 
     overlay.addEventListener("click", () => this.toggleBottomMenu(false));
 
-    btnParametre.addEventListener("click", () => {
+    itemParam.addEventListener("click", () => {
       this.toggleBottomMenu(false, true);
       if (window.appController) {
         window.appController.navigateToPage("settings");
         const footerIcons = document.querySelectorAll(".icon-footer");
         if (footerIcons.length > 3) {
-          footerIcons.forEach((i) => i.classList.remove("active"));
+          footerIcons.forEach(i => i.classList.remove("active"));
           footerIcons[3].classList.add("active");
           this.updateFooterSlider(3, true);
         }
       }
     });
 
-    btnCompte.addEventListener("click", () => {
+    itemCompte.addEventListener("click", () => {
       this.toggleBottomMenu(false, true);
       if (window.appController) {
         window.appController.navigateToPage("profil");
         const footerIcons = document.querySelectorAll(".icon-footer");
         if (footerIcons.length > 3) {
-          footerIcons.forEach((i) => i.classList.remove("active"));
+          footerIcons.forEach(i => i.classList.remove("active"));
           footerIcons[3].classList.add("active");
           this.updateFooterSlider(3, true);
         }
       }
     });
   }
+
 
   toggleBottomMenu(forceShow, skipSliderReset = false) {
     this.createBottomMenu();
@@ -364,64 +417,121 @@ class AppView {
   }
 
   renderPodium() {
-    this.app.innerHTML = `
-      <h1>Podium</h1>    
-    `;
+    this.app.textContent = "";
+
+    const title = document.createElement("h1");
+    title.textContent = "Podium";
+
+    this.app.appendChild(title);
   }
 
   renderMusic() {
-    this.app.innerHTML = `
-      <h1>Musique</h1>
-    `;
+    this.app.textContent = "";
+
+    const title = document.createElement("h1");
+    title.textContent = "Musique";
+
+    this.app.appendChild(title);
   }
 
   renderProfil() {
-    this.app.innerHTML = `
-    <div class="profile-page">
-      
-        <img class="profil-img" src="/assets/img/other/base-profil.jpg" alt="Profil">
+    this.app.textContent = "";
 
-      <p class="profil-name">Shrek Fée</p>
+    const page = document.createElement("div");
+    page.className = "profile-page";
 
-      <div class="stats-row">
-        <div class="card">
-          <h3>Récap</h3>
+    const img = document.createElement("img");
+    img.className = "profil-img";
+    img.src = "/assets/img/other/base-profil.jpg";
+    img.alt = "Profil";
 
-        </div>
-        <div class="card">
-          <h3>Meilleurs Amis</h3>
+    const name = document.createElement("p");
+    name.className = "profil-name";
+    name.textContent = "Shrek Fée";
 
-        </div>
-      </div>
+    const statsRow = document.createElement("div");
+    statsRow.className = "stats-row";
 
-      <div class="history-section">
-        <h3>Historique des séances</h3>
- 
-      </div>
+    const card1 = document.createElement("div");
+    card1.className = "card";
+    const h1 = document.createElement("h3");
+    h1.textContent = "Récap";
+    card1.appendChild(h1);
 
-      
-    </div>
-  `;
+    const card2 = document.createElement("div");
+    card2.className = "card";
+    const h2 = document.createElement("h3");
+    h2.textContent = "Meilleurs Amis";
+    card2.appendChild(h2);
+
+    statsRow.appendChild(card1);
+    statsRow.appendChild(card2);
+
+    const history = document.createElement("div");
+    history.className = "history-section";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = "Historique des séances";
+
+    history.appendChild(h3);
+
+    page.appendChild(img);
+    page.appendChild(name);
+    page.appendChild(statsRow);
+    page.appendChild(history);
+
+    this.app.appendChild(page);
   }
+
 
   renderSettings() {
     const isLightMode = document.body.classList.contains("light-mode");
 
-    this.app.innerHTML = `
-      <div style="padding-top: 12dvh; text-align: center; color: var(--color-text-main);">
-        <h1>Paramètres</h1>
-        <p>Gérez vos options ici.</p>
-        
-        <div class="theme-switch-wrapper">
-          <span>Sombre</span>
-          <label class="theme-switch" for="theme-checkbox">
-            <input type="checkbox" id="theme-checkbox" ${isLightMode ? "checked" : ""} />
-            <div class="slider"></div>
-          </label>
-          <span>Clair</span>
-        </div>
-      </div>
-    `;
+    this.app.textContent = "";
+
+    const container = document.createElement("div");
+    container.style.paddingTop = "12dvh";
+    container.style.textAlign = "center";
+    container.style.color = "var(--color-text-main)";
+
+    const title = document.createElement("h1");
+    title.textContent = "Paramètres";
+
+    const subtitle = document.createElement("p");
+    subtitle.textContent = "Gérez vos options ici.";
+
+    const switchWrapper = document.createElement("div");
+    switchWrapper.className = "theme-switch-wrapper";
+
+    const darkLabel = document.createElement("span");
+    darkLabel.textContent = "Sombre";
+
+    const lightLabel = document.createElement("span");
+    lightLabel.textContent = "Clair";
+
+    const label = document.createElement("label");
+    label.className = "theme-switch";
+    label.setAttribute("for", "theme-checkbox");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "theme-checkbox";
+    checkbox.checked = isLightMode;
+
+    const slider = document.createElement("div");
+    slider.className = "slider";
+
+    label.appendChild(checkbox);
+    label.appendChild(slider);
+
+    switchWrapper.appendChild(darkLabel);
+    switchWrapper.appendChild(label);
+    switchWrapper.appendChild(lightLabel);
+    container.appendChild(title);
+    container.appendChild(subtitle);
+    container.appendChild(switchWrapper);
+
+    this.app.appendChild(container);
   }
 
   initTheme() {
