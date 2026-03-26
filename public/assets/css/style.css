@@ -54,16 +54,26 @@ body.light-mode #app {
   outline-offset: 0;
 }
 
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+a,
+.path-button-container {
+  -webkit-tap-highlight-color: transparent;
+}
+
 html,
 body {
   overflow-x: hidden;
   max-width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   overflow-y: hidden;
 }
 
 #app {
-  height: 100vh;
+  height: 100dvh;
   overflow-y: hidden;
   background: linear-gradient(135deg, var(--color-bg-main) 0%, #14191e 100%);
 }
@@ -82,13 +92,13 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  margin-top: 10vh;
+  margin-top: 10dvh;
   padding: 60px 0;
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-  margin-bottom: 10vh;
-  max-height: 90vh;
+  margin-bottom: 10dvh;
+  max-height: 90dvh;
   overflow-y: auto;
   box-sizing: border-box;
   padding-bottom: 200px;
@@ -377,7 +387,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 10vh;
+  height: 10dvh;
   background: var(--color-bg-footer);
   border-top: 2px solid var(--color-border-light);
 }
@@ -413,7 +423,7 @@ body {
 .main-header {
   display: flex;
   width: 100vw;
-  height: 10vh;
+  height: 10dvh;
   justify-content: space-around;
   align-items: center;
   z-index: 1001;
