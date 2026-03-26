@@ -655,7 +655,6 @@ input:checked + .slider:before {
 }
 
 .bottom-menu-item:active {
-  transform: scale(0.98);
   background-color: var(--color-border-soft);
 }
 
