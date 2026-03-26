@@ -49,6 +49,11 @@ body.light-mode #app {
   box-sizing: border-box;
 }
 
+*:focus:not(:focus-visible) {
+  outline: none;
+  outline-offset: 0;
+}
+
 html,
 body {
   overflow-x: hidden;

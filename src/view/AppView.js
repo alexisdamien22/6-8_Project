@@ -374,11 +374,7 @@ class AppView {
       <h1>Musique</h1>
     `;
   }
-  renderMenu() {
-    this.app.innerHTML = `
-      <h1>Menu</h1>
-    `;
-  }
+
   renderProfil() {
     this.app.innerHTML = `
     <div class="profile-page">
@@ -412,7 +408,7 @@ class AppView {
     const isLightMode = document.body.classList.contains("light-mode");
 
     this.app.innerHTML = `
-      <div style="padding-top: 12vh; text-align: center; color: var(--color-text-main);">
+      <div style="padding-top: 12dvh; text-align: center; color: var(--color-text-main);">
         <h1>Paramètres</h1>
         <p>Gérez vos options ici.</p>
         
