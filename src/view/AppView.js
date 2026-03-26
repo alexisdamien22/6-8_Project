@@ -30,7 +30,7 @@ export class AppView {
       this.syncFooter(
         pages.indexOf(
           document.querySelector(".icon-footer.active")?.dataset?.page ||
-            "home",
+          "home",
         ),
       ),
     );
@@ -80,6 +80,14 @@ export class AppView {
     this.app.innerHTML = HomePage.getHTML(data);
     HomePage.afterRender();
   }
+
+  renderPageTitle(titleText) {
+    this.app.textContent = "";
+    const title = document.createElement("h1");
+    title.textContent = titleText;
+    this.app.appendChild(title);
+  }
+
   renderPodium() {
     this.renderPageTitle("Podium");
   }
