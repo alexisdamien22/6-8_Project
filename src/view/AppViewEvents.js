@@ -30,8 +30,12 @@ export function initAppEvents(view) {
       e.stopImmediatePropagation();
       return;
     }
-    if (e.target.classList.contains("path-dot")) {
-      const step = e.target.closest(".path-step");
+
+    const clickedElement = document.elementFromPoint(e.clientX, e.clientY);
+    const pathDot = clickedElement?.closest(".path-dot");
+
+    if (pathDot) {
+      const step = pathDot.closest(".path-step");
       const popup = step.querySelector(".duo-popup");
       document
         .querySelectorAll(".path-step")
