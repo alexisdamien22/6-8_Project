@@ -1,17 +1,32 @@
 export const AppViewNavigation = {
   updateSlider(index, animated = true) {
-    const footerIcons = document.querySelectorAll(".icon-footer");
-    const slider = document.querySelector(".footer-slider");
-    if (!slider || !footerIcons[index]) return;
+    const footer = document.querySelector(".main-footer");
+    const icons = document.querySelectorAll(".icon-footer");
 
-    const icon = footerIcons[index];
+    if (!footer || icons.length === 0) return;
+
+    let slider = footer.querySelector(".footer-slider");
+    if (!slider) {
+      slider = document.createElement("div");
+      slider.className = "footer-slider";
+      footer.appendChild(slider);
+    }
+
+    const icon = icons[index];
+    if (!icon) return;
+
     requestAnimationFrame(() => {
       slider.style.transition = animated
         ? "left 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease"
         : "none";
+
       slider.style.width = `${icon.offsetWidth}px`;
       slider.style.left = `${icon.offsetLeft}px`;
-      if (icon.offsetWidth > 0) slider.style.opacity = "1";
+
+      if (icon.offsetWidth > 0) {
+        slider.style.opacity = "1";
+        slider.style.display = "block";
+      }
     });
   },
 

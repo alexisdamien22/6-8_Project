@@ -12,6 +12,7 @@ export class AppView {
     this.app = document.getElementById("app");
     AppViewTheme.init();
     initAppEvents(this);
+    this.setupFooterNavigation();
   }
 
   setupFooterNavigation() {
@@ -30,7 +31,7 @@ export class AppView {
       this.syncFooter(
         pages.indexOf(
           document.querySelector(".icon-footer.active")?.dataset?.page ||
-          "home",
+            "home",
         ),
       ),
     );
