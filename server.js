@@ -1,15 +1,21 @@
-const express = require("express");
-const path = require("path");
-const { ChildAccountManager } = require("./src/managers/ChildAccountManager");
-const { WeeklyPlanManager } = require("./src/managers/WeeklyPlanManager");
-const { StreaksManager } = require("./src/managers/StreaksManager");
-const { db } = require("./src/db/connection");
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { ChildAccountManager } from "./src/managers/ChildAccountManager.js";
+import { WeeklyPlanManager } from "./src/managers/WeeklyPlanManager.js";
+import { StreaksManager } from "./src/managers/StreaksManager.js";
+import { db } from "./src/db/connection.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-
+app.post("/api/test", (req, res) => {
+  res.json({ message: "La route API fonctionne !" });
+});
 app.use((req, res, next) => {
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   res.setHeader("Pragma", "no-cache");
@@ -36,7 +42,7 @@ app.get("/api/status", (req, res) => {
 app.post("/api/signup/child", async (req, res) => {
   try {
     const data = req.body;
-    const childId = await ChildAccountManager.create(data.prenom);
+    const childId = await ChildAccountManager.create(data.name);
 
     const joursMap = {
       L: "monday",

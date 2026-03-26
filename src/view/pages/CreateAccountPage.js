@@ -36,7 +36,7 @@ let _step = 1;
 let _isLoginMode = true;
 let _loginState = { email: "", password: "" };
 let _state = {
-  prenom: "",
+  name: "",
   age: "",
   instrument: "",
   duree: "",
@@ -58,7 +58,7 @@ function isStepValid() {
   }
   switch (_step) {
     case 1:
-      return _state.prenom.trim().length >= 2;
+      return _state.name.trim().length >= 2;
     case 2: {
       const a = parseInt(_state.age);
       return !isNaN(a) && a >= 5 && a <= 99;
@@ -99,8 +99,8 @@ function buildFormContent(step) {
   switch (step) {
     case 1:
       return `<p class="ca-question">Quel est ton <em>prénom</em> ?</p>
-              <input class="ca-input" type="text" placeholder="Prénom" value="${esc(_state.prenom)}"
-                oninput="window.__ca_input('prenom', this.value)">`;
+              <input class="ca-input" type="text" placeholder="Prénom" value="${esc(_state.name)}"
+                oninput="window.__ca_input('name', this.value)">`;
     case 2:
       return `<p class="ca-question">Quel est ton <em>âge</em> ?</p>
               <input class="ca-input" type="number" placeholder="Âge" min="5" max="99" value="${esc(_state.age)}"
@@ -155,7 +155,7 @@ export const CreateAccountPage = {
         <div class="ca-screen ca-success">
           <div class="ca-success-body">
             <div class="ca-success-mascot">${_state.mascotte || "🎵"}</div>
-            <h2 class="ca-success-title">Bienvenue, ${esc(_state.prenom)} !</h2>
+            <h2 class="ca-success-title">Bienvenue, ${esc(_state.name)} !</h2>
             <p class="ca-success-msg">Ton compte est prêt. Pratique chaque jour !</p>
           </div>
           <div class="ca-footer">
