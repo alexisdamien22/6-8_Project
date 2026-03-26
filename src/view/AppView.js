@@ -81,15 +81,110 @@ export class AppView {
     HomePage.afterRender();
   }
   renderPodium() {
-    this.app.innerHTML = PodiumPage.getHTML();
+    this.renderPageTitle("Podium");
   }
+
   renderMusic() {
-    this.app.innerHTML = MusicPage.getHTML();
+    this.renderPageTitle("Musique");
   }
-  renderProfil() {
-    this.app.innerHTML = ProfilPage.getHTML();
-  }
+
   renderSettings() {
-    this.app.innerHTML = SettingsPage.getHTML();
+    const isLightMode = document.body.classList.contains("light-mode");
+
+    this.app.textContent = "";
+
+    const container = document.createElement("div");
+    container.style.paddingTop = "12dvh";
+    container.style.textAlign = "center";
+    container.style.color = "var(--color-text-main)";
+
+    const title = document.createElement("h1");
+    title.textContent = "Paramètres";
+
+    const subtitle = document.createElement("p");
+    subtitle.textContent = "Gérez vos options ici.";
+
+    const switchWrapper = document.createElement("div");
+    switchWrapper.className = "theme-switch-wrapper";
+
+    const darkLabel = document.createElement("span");
+    darkLabel.textContent = "Sombre";
+
+    const lightLabel = document.createElement("span");
+    lightLabel.textContent = "Clair";
+
+    const label = document.createElement("label");
+    label.className = "theme-switch";
+    label.setAttribute("for", "theme-checkbox");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "theme-checkbox";
+    checkbox.checked = isLightMode;
+
+    const slider = document.createElement("div");
+    slider.className = "slider";
+
+    label.appendChild(checkbox);
+    label.appendChild(slider);
+
+    switchWrapper.appendChild(darkLabel);
+    switchWrapper.appendChild(label);
+    switchWrapper.appendChild(lightLabel);
+
+    container.appendChild(title);
+    container.appendChild(subtitle);
+    container.appendChild(switchWrapper);
+
+    this.app.appendChild(container);
+  }
+
+  renderProfil() {
+    this.app.textContent = "";
+
+    const page = document.createElement("div");
+    page.className = "profile-page";
+
+    const img = document.createElement("img");
+    img.className = "profil-img";
+    img.src = "/assets/img/other/base-profil.jpg";
+    img.alt = "Profil";
+
+    const name = document.createElement("p");
+    name.className = "profil-name";
+    name.textContent = "Shrek Fée";
+
+    const statsRow = document.createElement("div");
+    statsRow.className = "stats-row";
+
+    const card1 = document.createElement("div");
+    card1.className = "card";
+    const h1 = document.createElement("h3");
+    h1.textContent = "Récap";
+    card1.appendChild(h1);
+
+    const card2 = document.createElement("div");
+    card2.className = "card";
+    const h2 = document.createElement("h3");
+    h2.textContent = "Meilleurs Amis";
+    card2.appendChild(h2);
+
+    statsRow.appendChild(card1);
+    statsRow.appendChild(card2);
+
+    const history = document.createElement("div");
+    history.className = "history-section";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = "Historique des séances";
+
+    history.appendChild(h3);
+
+    page.appendChild(img);
+    page.appendChild(name);
+    page.appendChild(statsRow);
+    page.appendChild(history);
+
+    this.app.appendChild(page);
   }
 }
