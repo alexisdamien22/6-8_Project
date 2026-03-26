@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `6/8_production`
+-- Database: `six_huit_production`
 --
 
 -- --------------------------------------------------------
