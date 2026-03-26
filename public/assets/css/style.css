@@ -101,7 +101,7 @@ body {
   max-height: 90dvh;
   overflow-y: auto;
   box-sizing: border-box;
-  padding-bottom: 200px;
+  padding-bottom: 35dvh;
 }
 
 .path-step {
@@ -371,6 +371,19 @@ body {
 
 .start-btn:hover {
   box-shadow: 0 3px 0 var(--color-todo-shadow);
+}
+
+.start-btn.disabled {
+  background-color: var(--color-nothing);
+  box-shadow: 0 4px 0 var(--color-nothing-shadow);
+  cursor: not-allowed;
+  color: #e0e0e0;
+}
+
+.start-btn.disabled:active,
+.start-btn.disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 0 var(--color-nothing-shadow);
 }
 
 .start-btn.disabled::before {
