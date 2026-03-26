@@ -1,4 +1,4 @@
-class AppModel {
+export class AppModel {
   constructor() {
     this.activeChild = {
       name: "Léo",
@@ -15,6 +15,7 @@ class AppModel {
       ],
     };
   }
+
   getChildData() {
     return this.activeChild;
   }

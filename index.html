@@ -33,82 +33,63 @@
     <div id="app"></div>
     <div id="footer-placeholder"></div>
 
-    <script src="src/model/AppModel.js"></script>
-    <script src="src/view/AppView.js"></script>
-    <script src="src/controller/AppController.js"></script>
+    <script type="module">
+      import { AppModel } from "./src/model/AppModel.js";
+      import { AppView } from "./src/view/AppView.js";
+      import { AppController } from "./src/controller/AppController.js";
 
-    <script>
-      let view;
-      let appModel;
-      let appController;
-
-      document.addEventListener("DOMContentLoaded", () => {
-        try {
-          if (
-            typeof AppModel !== "undefined" &&
-            typeof AppView !== "undefined" &&
-            typeof AppController !== "undefined"
-          ) {
-            appModel = new AppModel();
-            window.appModel = appModel;
-            view = new AppView();
-            appController = new AppController(appModel, view);
-            window.appController = appController;
-            console.log("Système Six-Huit initialisé avec succès.");
-          } else {
-            console.error(
-              "Erreur : Une ou plusieurs classes MVC sont manquantes.",
-            );
-          }
-        } catch (error) {
-          console.error("Erreur lors du lancement de l'application :", error);
-        }
-      });
-    </script>
-
-    <script>
+      // Fonctions globales pour le module
       async function loadPartial(id, url) {
-        const res = await fetch(url);
-        if (res.ok) {
-          document.getElementById(id).innerHTML = await res.text();
-        } else {
-          console.error("Erreur chargement partial", url, res.status);
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            document.getElementById(id).innerHTML = await res.text();
+            return true;
+          }
+        } catch (e) {
+          console.error("Erreur partial:", e);
         }
+        return false;
       }
 
-      async function initializeApp() {
-        await loadPartial("header-placeholder", "/src/view/header.html");
-        await loadPartial("footer-placeholder", "/src/view/footer.html");
+      // Lancement de l'application
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          // 1. Chargement du HTML statique
+          await Promise.all([
+            loadPartial("header-placeholder", "/src/view/header.html"),
+            loadPartial("footer-placeholder", "/src/view/footer.html"),
+          ]);
 
-        setTimeout(() => {
-          if (typeof view !== "undefined" && view.setupFooterNavigation) {
+          // 2. Initialisation MVC
+          const appModel = new AppModel();
+          const view = new AppView();
+          const appController = new AppController(appModel, view);
+
+          // 3. Exposition globale pour compatibilité
+          window.appModel = appModel;
+          window.view = view;
+          window.appController = appController;
+
+          // 4. Setup navigation footer
+          if (view.setupFooterNavigation) {
             view.setupFooterNavigation();
           }
-        }, 100);
-      }
 
-      initializeApp();
+          console.log("Six-Huit initialisé avec succès.");
+        } catch (error) {
+          console.error("Erreur au lancement:", error);
+        }
+      });
     </script>
 
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
-            .register("/sw.js", {
-              scope: "/",
-            })
-            .then((registration) => {
-              console.log(
-                "Service Worker enregistré avec succès:",
-                registration.scope,
-              );
-            })
-            .catch((error) => {
-              console.log(
-                "Échec de l'enregistrement du Service Worker:",
-                error,
-              );
-            });
+            .register("/sw.js", { scope: "/" })
+            .then((reg) => console.log("SW enregistré:", reg.scope))
+            .catch((err) => console.error("SW erreur:", err));
         });
       }
     </script>

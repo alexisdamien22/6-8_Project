@@ -1,4 +1,10 @@
-class AppView {
+import { HomePage } from "./pages/HomePage.js";
+import { PodiumPage } from "./pages/PodiumPage.js";
+import { MusicPage } from "./pages/MusicPage.js";
+import { ProfilPage } from "./pages/ProfilPage.js";
+import { SettingsPage } from "./pages/SettingsPage.js";
+
+export class AppView {
   constructor() {
     this.app = document.getElementById("app");
     this.initEventListeners();
@@ -45,7 +51,6 @@ class AppView {
 
         if (window.appController) {
           window.appController.navigateToPage("settings");
-
           const footerIcons = document.querySelectorAll(".icon-footer");
           if (footerIcons.length > 3) {
             footerIcons.forEach((i) => i.classList.remove("active"));
@@ -58,7 +63,6 @@ class AppView {
 
     this.app.addEventListener("click", (e) => {
       const popupClicked = e.target.closest(".duo-popup");
-
       if (popupClicked) {
         e.stopImmediatePropagation();
         if (e.target.classList.contains("start-btn")) {
@@ -70,14 +74,12 @@ class AppView {
       if (e.target.classList.contains("path-dot")) {
         const step = e.target.closest(".path-step");
         const popup = step.querySelector(".duo-popup");
-
         document
           .querySelectorAll(".path-step")
           .forEach((s) => (s.style.zIndex = "1"));
         document.querySelectorAll(".duo-popup").forEach((p) => {
           if (p !== popup) p.classList.remove("show");
         });
-
         const isOpening = !popup.classList.contains("show");
         popup.classList.toggle("show");
         step.style.zIndex = isOpening ? "999" : "1";
@@ -90,10 +92,7 @@ class AppView {
     });
 
     this.app.addEventListener("pointerdown", (e) => {
-      if (e.target.closest(".duo-popup")) {
-        return;
-      }
-
+      if (e.target.closest(".duo-popup")) return;
       const button = e.target.closest(".path-button-container");
       if (button) {
         button.classList.add("pressed");
@@ -119,85 +118,6 @@ class AppView {
     this.app.addEventListener("pointerup", releaseButton);
     this.app.addEventListener("pointercancel", releaseButton);
     this.app.addEventListener("pointerleave", releaseButton);
-  }
-
-  renderHome(childData) {
-    let pathHTML = "";
-    const joursFr = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-    let dayActuel = joursFr[new Date().getDay()];
-
-    const pattern = [0, 45, 25, -25, -45];
-
-    for (let i = 0; i < childData.sessions.length; i++) {
-      let session = childData.sessions[i];
-      let offset = pattern[i % pattern.length];
-
-      let mascotteHTML = "";
-      let haloHTML = "";
-      let popupContent = "";
-      let lockedClass = "";
-
-      if (session.day === dayActuel) {
-        mascotteHTML = `<img src="/assets/img/mascottes/camelion.png" class="mascotte-path" alt="Mascotte">`;
-        haloHTML = `<div class="today-halo"></div>`;
-      }
-      if (session.day === dayActuel) {
-        popupContent = `
-                  <h3>Leçon ${i + 1}</h3>
-                  <p>Prêt pour un défi ?</p>
-                  <button class="start-btn">COMMENCER</button>
-              `;
-      } else if (session.status === "done") {
-        popupContent = `
-                  <h3>Leçon ${i + 1}</h3>
-                  <p>Bravo ! Tu as validé cette séance.</p>
-              `;
-      } else {
-        lockedClass = "is-locked";
-        popupContent = `
-                  <h3>Leçon ${i + 1}</h3>
-                  <p>Patience... cette leçon n'est pas encore disponible.</p>
-                  <button class="start-btn disabled" disabled>
-                      <span class="icon-lock">🔒</span> BLOQUÉ
-                  </button>
-              `;
-      }
-
-      pathHTML += `
-                <div class="path-step ${session.status} ${lockedClass}" style="transform: translateX(${offset}px); z-index: 1;">
-                    <div class="path-button-container">
-                        ${haloHTML}
-                        ${mascotteHTML}
-                        <div class="path-dot-shadow"></div> 
-                        <div class="path-dot"></div>
-                        <div class="duo-popup">
-                          <div class="popup-arrow"></div>
-                          ${popupContent}
-                        </div>    
-                    </div>
-                    <span class="path-label">${session.day}</span>
-                </div>`;
-    }
-
-    this.app.innerHTML = `
-            <div class="home-screen">
-                <div class="path-container">
-                    ${pathHTML}
-                </div>
-            </div>
-        `;
-
-    this.scrollToCurrentDay();
-  }
-
-  scrollToCurrentDay() {
-    const currentElement = this.app.querySelector(".mascotte-path");
-    if (currentElement) {
-      currentElement.scrollIntoView({
-        behavior: "auto",
-        block: "center",
-      });
-    }
   }
 
   setupFooterNavigation() {
@@ -231,9 +151,6 @@ class AppView {
 
     setTimeout(updateSliderPosition, 50);
     window.addEventListener("load", updateSliderPosition);
-    footerIcons.forEach((icon) =>
-      icon.addEventListener("load", updateSliderPosition),
-    );
     window.addEventListener("resize", updateSliderPosition);
 
     footerIcons.forEach((icon, index) => {
@@ -247,13 +164,10 @@ class AppView {
           const container = document.getElementById("bottom-menu-container");
           const isShowing = container && container.classList.contains("show");
           this.toggleBottomMenu(!isShowing);
-          return;
         } else {
           this.toggleBottomMenu(false, true);
-        }
-
-        if (window.appController) {
-          window.appController.navigateToPage(currentPage);
+          if (window.appController)
+            window.appController.navigateToPage(currentPage);
         }
       });
     });
@@ -271,169 +185,91 @@ class AppView {
         : "none";
       slider.style.width = `${icon.offsetWidth}px`;
       slider.style.left = `${icon.offsetLeft}px`;
-
-      if (icon.offsetWidth > 0) {
-        slider.style.opacity = "1";
-      }
+      if (icon.offsetWidth > 0) slider.style.opacity = "1";
     });
   }
 
   createBottomMenu() {
     if (document.getElementById("bottom-menu-container")) return;
-
     const menuHTML = `
         <div id="bottom-menu-container" class="bottom-menu-container">
             <div class="bottom-menu-overlay"></div>
             <div class="bottom-menu-sheet">
-                <div class="bottom-menu-item" id="btn-compte">
-                    
-                    <span>Compte</span>
-                </div>
-                <div class="bottom-menu-item" id="btn-parametre-menu">
-                   
-                    <span>Paramètres</span>
-                </div>
+                <div class="bottom-menu-item" id="btn-compte"><span>Compte</span></div>
+                <div class="bottom-menu-item" id="btn-parametre-menu"><span>Paramètres</span></div>
             </div>
-        </div>
-    `;
+        </div>`;
     document.body.insertAdjacentHTML("beforeend", menuHTML);
 
     const container = document.getElementById("bottom-menu-container");
-    const overlay = container.querySelector(".bottom-menu-overlay");
-    const btnParametre = container.querySelector("#btn-parametre-menu");
-    const btnCompte = container.querySelector("#btn-compte");
+    container.querySelector(".bottom-menu-overlay").onclick = () =>
+      this.toggleBottomMenu(false);
 
-    overlay.addEventListener("click", () => this.toggleBottomMenu(false));
-
-    btnParametre.addEventListener("click", () => {
+    container.querySelector("#btn-parametre-menu").onclick = () => {
       this.toggleBottomMenu(false, true);
-      if (window.appController) {
-        window.appController.navigateToPage("settings");
-        const footerIcons = document.querySelectorAll(".icon-footer");
-        if (footerIcons.length > 3) {
-          footerIcons.forEach((i) => i.classList.remove("active"));
-          footerIcons[3].classList.add("active");
-          this.updateFooterSlider(3, true);
-        }
-      }
-    });
+      if (window.appController) window.appController.navigateToPage("settings");
+    };
 
-    btnCompte.addEventListener("click", () => {
+    container.querySelector("#btn-compte").onclick = () => {
       this.toggleBottomMenu(false, true);
-      if (window.appController) {
-        window.appController.navigateToPage("profil");
-        const footerIcons = document.querySelectorAll(".icon-footer");
-        if (footerIcons.length > 3) {
-          footerIcons.forEach((i) => i.classList.remove("active"));
-          footerIcons[3].classList.add("active");
-          this.updateFooterSlider(3, true);
-        }
-      }
-    });
+      if (window.appController) window.appController.navigateToPage("profil");
+    };
   }
 
   toggleBottomMenu(forceShow, skipSliderReset = false) {
     this.createBottomMenu();
     const container = document.getElementById("bottom-menu-container");
-    const isShowing = container.classList.contains("show");
-    const shouldShow = forceShow !== undefined ? forceShow : !isShowing;
+    const shouldShow =
+      forceShow !== undefined
+        ? forceShow
+        : !container.classList.contains("show");
 
     if (shouldShow) {
-      setTimeout(() => {
-        container.classList.add("show");
-      }, 0);
+      setTimeout(() => container.classList.add("show"), 0);
     } else {
       container.classList.remove("show");
-
       if (!skipSliderReset) {
         const hash = window.location.hash.substring(1) || "home";
         let targetPage =
           hash === "settings" || hash === "profil" ? "menu" : hash;
         const pages = ["home", "podium", "music", "menu"];
-        let activeIndex =
-          pages.indexOf(targetPage) !== -1 ? pages.indexOf(targetPage) : 0;
-
-        const footerIcons = document.querySelectorAll(".icon-footer");
-        if (footerIcons[activeIndex]) {
+        let activeIndex = pages.indexOf(targetPage);
+        if (activeIndex !== -1) {
+          const footerIcons = document.querySelectorAll(".icon-footer");
           footerIcons.forEach((i) => i.classList.remove("active"));
-          footerIcons[activeIndex].classList.add("active");
-          this.updateFooterSlider(activeIndex, true);
+          if (footerIcons[activeIndex]) {
+            footerIcons[activeIndex].classList.add("active");
+            this.updateFooterSlider(activeIndex, true);
+          }
         }
       }
     }
   }
 
+  renderHome(childData) {
+    this.app.innerHTML = HomePage.getHTML(childData);
+    HomePage.afterRender();
+  }
+
   renderPodium() {
-    this.app.innerHTML = `
-      <h1>Podium</h1>    
-    `;
+    this.app.innerHTML = PodiumPage.getHTML();
   }
-
   renderMusic() {
-    this.app.innerHTML = `
-      <h1>Musique</h1>
-    `;
+    this.app.innerHTML = MusicPage.getHTML();
   }
-
   renderProfil() {
-    this.app.innerHTML = `
-    <div class="profile-page">
-      
-        <img class="profil-img" src="/assets/img/other/base-profil.jpg" alt="Profil">
-
-      <p class="profil-name">Shrek Fée</p>
-
-      <div class="stats-row">
-        <div class="card">
-          <h3>Récap</h3>
-
-        </div>
-        <div class="card">
-          <h3>Meilleurs Amis</h3>
-
-        </div>
-      </div>
-
-      <div class="history-section">
-        <h3>Historique des séances</h3>
- 
-      </div>
-
-      
-    </div>
-  `;
+    this.app.innerHTML = ProfilPage.getHTML();
   }
-
   renderSettings() {
-    const isLightMode = document.body.classList.contains("light-mode");
-
-    this.app.innerHTML = `
-      <div style="padding-top: 12dvh; text-align: center; color: var(--color-text-main);">
-        <h1>Paramètres</h1>
-        <p>Gérez vos options ici.</p>
-        
-        <div class="theme-switch-wrapper">
-          <span>Sombre</span>
-          <label class="theme-switch" for="theme-checkbox">
-            <input type="checkbox" id="theme-checkbox" ${isLightMode ? "checked" : ""} />
-            <div class="slider"></div>
-          </label>
-          <span>Clair</span>
-        </div>
-      </div>
-    `;
+    this.app.innerHTML = SettingsPage.getHTML();
   }
 
   initTheme() {
     const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme) {
-      if (savedTheme === "light") {
-        document.body.classList.add("light-mode");
-      }
-    } else if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: light)").matches
+    if (
+      savedTheme === "light" ||
+      (!savedTheme &&
+        window.matchMedia("(prefers-color-scheme: light)").matches)
     ) {
       document.body.classList.add("light-mode");
     }
