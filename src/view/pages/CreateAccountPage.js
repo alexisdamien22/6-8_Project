@@ -209,7 +209,6 @@ export const CreateAccountPage = {
         window.appController?.navigateToPage("createAccount");
       });
 
-    // Dans afterRender du CreateAccountPage.js
     document
       .getElementById("ca-main-btn")
       ?.addEventListener("click", async () => {
@@ -224,23 +223,24 @@ export const CreateAccountPage = {
           const res = await response.json();
           if (res.success) {
             localStorage.setItem("activeChildId", res.user.id);
+            window.appController?.model.login();
             window.appController?.navigateToPage("home");
           } else {
             alert("Identifiants incorrects");
           }
         } else {
           if (_step === TOTAL) {
-            // --- ENVOI AU SERVEUR ---
             const response = await fetch("/api/signup/child", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(_state), // Envoie tout le formulaire
+              body: JSON.stringify(_state),
             });
 
             const result = await response.json();
             if (result.success) {
               _step = 8;
               localStorage.setItem("activeChildId", result.childId);
+              window.appController?.model.login();
               window.appController?.navigateToPage("createAccount");
             } else {
               alert("Erreur lors de la création : " + result.error);

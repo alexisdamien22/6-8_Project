@@ -8,5 +8,6 @@ export const AppFireChange = {
     else if (strikNumber < 14) return locate + "2" + ext;
     else if (strikNumber < 21) return locate + "3" + ext;
     else if (strikNumber < 28) return locate + "4" + ext;
+    else return locate + "4" + ext;
   },
 };

@@ -7,6 +7,7 @@ import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
 import { CreateAccountPage } from "./pages/CreateAccountPage.js";
+import { AppFireChange } from "./AppFireChange.js";
 
 export class AppView {
   constructor() {
@@ -14,6 +15,7 @@ export class AppView {
     AppViewTheme.init();
     initAppEvents(this);
     this.setupFooterNavigation();
+    this.updateHeaderStreak();
   }
 
   setupFooterNavigation() {
@@ -83,10 +85,33 @@ export class AppView {
     if (footer) footer.style.display = "";
 
     const header = document.querySelector("header, .main-header");
-    if (header) header.style.display = "";
+    if (header) {
+      header.style.display = "";
+      this.updateHeaderStreak();
+    }
 
     this.app.innerHTML = HomePage.getHTML(data);
     HomePage.afterRender();
+  }
+
+  updateHeaderStreak() {
+    const streakText = document.querySelector(".strik-text");
+    const streakIcon = document.querySelector(".strik-icon");
+
+    const streakValue = localStorage.getItem("strik") || "0";
+
+    if (streakText) {
+      streakText.textContent = streakValue;
+    }
+
+    if (streakIcon) {
+      const flamePath = AppFireChange.FireTextur(parseInt(streakValue));
+      if (streakIcon.tagName.toLowerCase() === "img") {
+        streakIcon.src = flamePath;
+      } else {
+        streakIcon.style.backgroundImage = `url('${flamePath}')`;
+      }
+    }
   }
 
   renderPageTitle(titleText) {

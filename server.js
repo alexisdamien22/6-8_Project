@@ -42,7 +42,7 @@ app.get("/api/status", (req, res) => {
 app.post("/api/signup/child", async (req, res) => {
   try {
     const data = req.body;
-    const childId = await ChildAccountManager.create(data.name, null);
+    const childId = await ChildAccountManager.create(data, null);
 
     const joursMap = {
       L: "monday",
