@@ -91,7 +91,7 @@ body {
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
-  padding-bottom: 500px;
+  padding-bottom: 200px;
 }
 
 .path-step {
