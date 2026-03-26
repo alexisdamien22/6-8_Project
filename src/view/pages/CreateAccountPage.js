@@ -239,8 +239,8 @@ export const CreateAccountPage = {
 
             const result = await response.json();
             if (result.success) {
-              _step = 8; // Affiche l'écran succès
-              localStorage.setItem("activeChildId", result.childId); // Sauvegarde la session
+              _step = 8;
+              localStorage.setItem("activeChildId", result.childId);
               window.appController?.navigateToPage("createAccount");
             } else {
               alert("Erreur lors de la création : " + result.error);

@@ -42,7 +42,7 @@ app.get("/api/status", (req, res) => {
 app.post("/api/signup/child", async (req, res) => {
   try {
     const data = req.body;
-    const childId = await ChildAccountManager.create(data.name);
+    const childId = await ChildAccountManager.create(data.name, null);
 
     const joursMap = {
       L: "monday",
@@ -56,11 +56,11 @@ app.post("/api/signup/child", async (req, res) => {
 
     if (data.jours && Array.isArray(data.jours)) {
       for (let j of data.jours) {
-        await WeeklyPlanManager.updateDay(childId, joursMap[j], 1, "#7b2fbe");
+        await WeeklyPlanManager.setDay(childId, joursMap[j], 1, "#7b2fbe");
       }
     }
 
-    await StreaksManager.updateStreak(childId, 0);
+    await StreaksManager.update(childId, 0, null);
 
     res.json({ success: true, childId: childId });
   } catch (err) {
