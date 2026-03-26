@@ -1,36 +1,35 @@
-const SVGS = {
-  piano: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="18" width="52" height="30" rx="4"/><rect x="6" y="18" width="52" height="18" rx="4" fill="white" fill-opacity=".15"/><rect x="11" y="22" width="6" height="11" rx="2" fill="white"/><rect x="20" y="22" width="6" height="11" rx="2" fill="white"/><rect x="35" y="22" width="6" height="11" rx="2" fill="white"/><rect x="44" y="22" width="6" height="11" rx="2" fill="white"/><rect x="16" y="22" width="4" height="8" rx="1.5"/><rect x="25" y="22" width="4" height="8" rx="1.5"/><rect x="40" y="22" width="4" height="8" rx="1.5"/><rect x="49" y="22" width="4" height="8" rx="1.5"/></svg>`,
-  guitare: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M29 7h6v20q8 4 8 15a11 11 0 0 1-22 0q0-11 8-15Z"/><rect x="30" y="3" width="4" height="8" rx="2"/><circle cx="32" cy="41" r="4" fill="white" fill-opacity=".25"/></svg>`,
-  violon: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 7c-7 0-11 5-11 11 0 4 2 7 2 11s-4 6-4 12c0 9 6 16 13 16s13-7 13-16c0-6-4-8-4-12s2-7 2-11c0-6-4-11-11-11z"/><path d="M21 23q-4 2-4 6t4 3" fill="white" fill-opacity=".2"/><path d="M43 23q4 2 4 6t-4 3" fill="white" fill-opacity=".2"/></svg>`,
-  flute: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="27" width="50" height="10" rx="5" transform="rotate(-28 32 32)"/><circle cx="19" cy="40" r="2.8" fill="white" fill-opacity=".5"/><circle cx="27" cy="36" r="2.8" fill="white" fill-opacity=".5"/><circle cx="35" cy="31" r="2.8" fill="white" fill-opacity=".5"/><circle cx="43" cy="27" r="2.8" fill="white" fill-opacity=".5"/></svg>`,
-  batterie: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="37" rx="20" ry="10"/><ellipse cx="32" cy="30" rx="20" ry="10" fill-opacity=".75"/><ellipse cx="32" cy="30" rx="20" ry="10" fill="none" stroke="white" stroke-opacity=".3" stroke-width="1.5"/><line x1="24" y1="13" x2="28" y2="30" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="40" y1="13" x2="36" y2="30" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>`,
-  trompette: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M8 27h30q9 0 13 9a10 10 0 0 1 0 8l-5-1a6 6 0 0 0-2-7q-3-4-6-4H8z"/><rect x="6" y="27" width="4" height="5" rx="2"/><circle cx="22" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="3"/><rect x="28" y="19" width="4" height="13" rx="2"/><rect x="34" y="19" width="4" height="13" rx="2"/></svg>`,
-  saxophone: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M36 8h5v7q13 3 13 18 0 20-18 25-9 3-15-2l4-5q7 4 13-1 9-7 7-17-2-12-9-13h-5z"/><circle cx="39" cy="26" r="2.2" fill="white" fill-opacity=".5"/><circle cx="43" cy="33" r="2.2" fill="white" fill-opacity=".5"/><circle cx="42" cy="40" r="2.2" fill="white" fill-opacity=".5"/><rect x="30" y="6" width="9" height="6" rx="2.5"/></svg>`,
-  basse: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M27 7h10v20q10 5 10 16a15 15 0 0 1-30 0q0-11 10-16z"/><rect x="29" y="2" width="5" height="9" rx="2.5"/><line x1="28" y1="9" x2="28" y2="28" stroke="white" stroke-width="1.3" stroke-opacity=".45"/><line x1="33" y1="9" x2="33" y2="28" stroke="white" stroke-width="1.3" stroke-opacity=".45"/><line x1="38" y1="9" x2="38" y2="28" stroke="white" stroke-width="1.3" stroke-opacity=".45"/></svg>`,
+const ICONS = {
+  basson: "./assets/img/icons/basson.png",
+  guitare: "./assets/img/icons/guitar.png",
+  violon: "./assets/img/icons/violin.png",
+  flute: "./assets/img/icons/recorder.png",
+  batterie: "./assets/img/icons/drum.png",
+  trompette: "./assets/img/icons/trumpet.png",
+  corHarmonie: "./assets/img/icons/french-horn.png",
+  // basse: "./assets/img/icons/basse.png",
 };
 
 const INSTRUMENTS = [
-  { id: "piano", lbl: "Piano", svg: SVGS.piano },
-  { id: "guitare", lbl: "Guitare", svg: SVGS.guitare },
-  { id: "violon", lbl: "Violon", svg: SVGS.violon },
-  { id: "flute", lbl: "Flûte", svg: SVGS.flute },
-  { id: "batterie", lbl: "Batterie", svg: SVGS.batterie },
-  { id: "trompette", lbl: "Trompette", svg: SVGS.trompette },
-  { id: "saxophone", lbl: "Saxophone", svg: SVGS.saxophone },
-  { id: "basse", lbl: "Basse", svg: SVGS.basse },
+  { id: "basson", lbl: "Basson", png: ICONS.basson },
+  { id: "guitare", lbl: "Guitare", png: ICONS.guitare },
+  { id: "violon", lbl: "Violon", png: ICONS.violon },
+  { id: "flute", lbl: "Flûte", png: ICONS.flute },
+  { id: "batterie", lbl: "Batterie", png: ICONS.batterie },
+  { id: "trompette", lbl: "Trompette", png: ICONS.trompette },
+  { id: "corHarmonie", lbl: "Cor d'Harmonie", png: ICONS.corHarmonie },
 ];
 
 const STEP_ILLUS = {
-  1: { svg: SVGS.guitare, lbl: "Guitare basse" },
-  2: { svg: SVGS.flute, lbl: "Basson" },
-  3: { svg: SVGS.violon, lbl: "Violon" },
-  4: { svg: SVGS.batterie, lbl: "Caisse claire" },
-  5: { svg: SVGS.trompette, lbl: "Cor d'harmonie" },
-  6: { svg: SVGS.trompette, lbl: "Trompette" },
-  7: { svg: SVGS.flute, lbl: "Flûte traversière" },
+  1: { png: ICONS.guitare, lbl: "Guitare" },
+  2: { png: ICONS.flute, lbl: "Flute" },
+  3: { png: ICONS.violon, lbl: "Violon" },
+  4: { png: ICONS.batterie, lbl: "Batteriee" },
+  5: { png: ICONS.corHarmonie, lbl: "Cor d'harmonie" },
+  6: { png: ICONS.trompette, lbl: "Trompette" },
+  7: { png: ICONS.flute, lbl: "Flûte traversière" },
 };
 
-const MASCOTTES = ["🦊", "🐸", "🐱", "🐶", "🦄", "🐼", "🐰", "🦋", "🐺"];
+const MASCOTTES = ["🦊", "🐸", "🐱", "🐶", "🦄", "🐼", "🐰", "🦋", "🐺"]; // Crop les images des mascottes
 const JOURS = ["L", "Ma", "Me", "J", "V", "S", "D"];
 const TOTAL = 7;
 
