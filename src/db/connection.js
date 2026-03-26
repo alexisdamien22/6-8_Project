@@ -4,6 +4,6 @@ export const db = await mysql.createPool({
     host: "localhost",
     user: "root",
     password: "",
-    database: "6/8_production",
+    database: "six_huit_production",
     connectionLimit: 10,
 });
