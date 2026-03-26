@@ -6,6 +6,7 @@ import { SettingsPage } from "./pages/SettingsPage.js";
 import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
+import { CreateAccountPage } from "./pages/CreateAccountPage.js";
 
 export class AppView {
   constructor() {
@@ -78,6 +79,12 @@ export class AppView {
   }
 
   renderHome(data) {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "";
+
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "";
+
     this.app.innerHTML = HomePage.getHTML(data);
     HomePage.afterRender();
   }
@@ -195,5 +202,16 @@ export class AppView {
     page.appendChild(history);
 
     this.app.appendChild(page);
+  }
+
+  renderCreateAccount() {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
+
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+
+    this.app.innerHTML = CreateAccountPage.getHTML();
+    CreateAccountPage.afterRender();
   }
 }

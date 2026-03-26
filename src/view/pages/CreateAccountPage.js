@@ -249,6 +249,7 @@ export const CreateAccountPage = {
     });
 
     document.getElementById("ca-btn-start")?.addEventListener("click", () => {
+      window.appController?.model.login(); // Enregistre la connexion
       window.appController?.navigateToPage("home");
     });
 
