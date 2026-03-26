@@ -472,14 +472,14 @@ body {
   background-color: var(--color-button);
 }
 .parametre {
-  height: 70%;
+  height: 90%;
   aspect-ratio: 1;
-  background-color: #f0f0f0;
   border-radius: 10px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 1s ease;
 }
 
 .parametre::before {
@@ -501,6 +501,14 @@ body {
   mask-position: center;
 
   background-color: var(--color-button);
+  transition: transform 0.2s ease;
+}
+.parametre:hover {
+  cursor: pointer;
+}
+
+.parametre:hover::before {
+  transform: rotate(10deg);
 }
 
 .theme-switch-wrapper {

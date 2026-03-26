@@ -33,7 +33,16 @@ class AppView {
         }
       }
 
-      if (e.target.closest(".parametre")) {
+      const parametreButton = e.target.closest(".parametre");
+      if (parametreButton) {
+        let currentRotation = parseInt(
+          parametreButton.dataset.rotation || "0",
+          10,
+        );
+        currentRotation += 360;
+        parametreButton.dataset.rotation = currentRotation;
+        parametreButton.style.transform = `rotate(${currentRotation}deg)`;
+
         if (window.appController) {
           window.appController.navigateToPage("settings");
 
