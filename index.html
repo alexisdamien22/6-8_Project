@@ -1,97 +1,87 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Six-Huit | Apprentissage Musical</title>
-    <link id="css" rel="stylesheet" href="" />
-    <script>
-      document.getElementById("css").href =
-        "/assets/css/style.css?v=" + Date.now();
-    </script>
-    <link rel="manifest" href="/manifest.json" />
-    <link
-      rel="icon"
-      href="/assets/img/icons/app-icon-86.png?v=2"
-      type="image/png"
-    />
-    <link rel="apple-touch-icon" href="/assets/img/icons/app-icon-86.png?v=2" />
-    <meta
-      name="theme-color"
-      content="#2563eb"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#001a4d"
-      media="(prefers-color-scheme: dark)"
-    />
-  </head>
 
-  <body>
-    <div id="header-placeholder"></div>
-    <div id="app"></div>
-    <div id="footer-placeholder"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Six-Huit | Apprentissage Musical</title>
+  <link id="css" rel="stylesheet" href="" />
+  <script>
+    document.getElementById("css").href =
+      "/assets/css/style.css?v=" + Date.now();
+  </script>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/assets/img/icons/app-icon-86.png?v=2" type="image/png" />
+  <link rel="apple-touch-icon" href="/assets/img/icons/app-icon-86.png?v=2" />
+  <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#001a4d" media="(prefers-color-scheme: dark)" />
+</head>
 
-    <script type="module">
-      import { AppModel } from "./src/model/AppModel.js";
-      import { AppView } from "./src/view/AppView.js";
-      import { AppController } from "./src/controller/AppController.js";
+<body>
+  <div id="header-placeholder"></div>
+  <div id="app"></div>
+  <div id="footer-placeholder"></div>
 
-      // Fonctions globales pour le module
-      async function loadPartial(id, url) {
-        try {
-          const res = await fetch(url);
-          if (res.ok) {
-            document.getElementById(id).innerHTML = await res.text();
-            return true;
-          }
-        } catch (e) {
-          console.error("Erreur partial:", e);
+  <script type="module">
+    import { AppModel } from "./src/model/AppModel.js";
+    import { AppView } from "./src/view/AppView.js";
+    import { AppController } from "./src/controller/AppController.js";
+
+    // Fonctions globales pour le module
+    async function loadPartial(id, url) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          document.getElementById(id).innerHTML = await res.text();
+          return true;
         }
-        return false;
+      } catch (e) {
+        console.error("Erreur partial:", e);
       }
+      return false;
+    }
 
-      // Lancement de l'application
-      document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          // 1. Chargement du HTML statique
-          await Promise.all([
-            loadPartial("header-placeholder", "/src/view/header.html"),
-            loadPartial("footer-placeholder", "/src/view/footer.html"),
-          ]);
+    // Lancement de l'application
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        // 1. Chargement du HTML statique
+        await Promise.all([
+          loadPartial("header-placeholder", "/src/view/header.html"),
+          loadPartial("footer-placeholder", "/src/view/footer.html"),
+        ]);
 
-          // 2. Initialisation MVC
-          const appModel = new AppModel();
-          const view = new AppView();
-          const appController = new AppController(appModel, view);
+        // 2. Initialisation MVC
+        const appModel = new AppModel();
+        const view = new AppView();
+        const appController = new AppController(appModel, view);
 
-          // 3. Exposition globale pour compatibilité
-          window.appModel = appModel;
-          window.view = view;
-          window.appController = appController;
+        // 3. Exposition globale pour compatibilité
+        window.appModel = appModel;
+        window.view = view;
+        window.appController = appController;
 
-          // 4. Setup navigation footer
-          if (view.setupFooterNavigation) {
-            view.setupFooterNavigation();
-          }
-
-          console.log("Six-Huit initialisé avec succès.");
-        } catch (error) {
-          console.error("Erreur au lancement:", error);
+        // 4. Setup navigation footer
+        if (view.setupFooterNavigation) {
+          view.setupFooterNavigation();
         }
+
+        console.log("Six-Huit initialisé avec succès.");
+      } catch (error) {
+        console.error("Erreur au lancement:", error);
+      }
+    });
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js", { scope: "/" })
+          .then((reg) => console.log("SW enregistré:", reg.scope))
+          .catch((err) => console.error("SW erreur:", err));
       });
-    </script>
+    }
+  </script>
+</body>
 
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js", { scope: "/" })
-            .then((reg) => console.log("SW enregistré:", reg.scope))
-            .catch((err) => console.error("SW erreur:", err));
-        });
-      }
-    </script>
-  </body>
 </html>
