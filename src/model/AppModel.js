@@ -16,8 +16,13 @@ export class AppModel {
     };
     this.onboardingStep = 0;
     this.tempData = {
-      name: "", age: "", instrument: "",
-      experience: "", school: "", mascot: "", practiceDays: []
+      name: "",
+      age: "",
+      instrument: "",
+      experience: "",
+      school: "",
+      mascot: "",
+      practiceDays: [],
     };
   }
 
@@ -74,9 +79,9 @@ export class AppModel {
       this.saveData();
       this.adjustSessionsToToday();
     }
+  }
 
   async saveFullProfile() {
     console.log("Envoi des données :", this.tempData);
   }
-}
 }

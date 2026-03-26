@@ -76,7 +76,7 @@ function buildFormContent(step) {
         (ins) => `
         <div class="ca-instr-card${_state.instrument === ins.id ? " sel" : ""}"
           onclick="window.__ca_pick('instrument','${ins.id}')">
-          <div class="ca-instr-icon">${ins.svg}</div>
+          <div class="ca-instr-icon"><img src="${ins.png}" alt="${ins.lbl}" /></div>
           <span class="ca-instr-lbl">${ins.lbl}</span>
         </div>`,
       ).join("");
@@ -205,7 +205,7 @@ export const CreateAccountPage = {
 
           <!-- Illustration décorative -->
           <div class="ca-illus-wrap">
-            ${svgWithFill(illus.svg)}
+            <img src="${illus.png}" alt="${illus.lbl}" />
             <span class="ca-illus-name">${illus.lbl}</span>
           </div>
 
