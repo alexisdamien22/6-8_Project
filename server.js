@@ -27,7 +27,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- FICHIERS STATIQUES ---
 app.get("/manifest.json", (req, res) => {
   res.sendFile(path.join(__dirname, "manifest.json"));
 });
@@ -40,13 +39,10 @@ app.get("/sw.js", (req, res) => {
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/src", express.static(path.join(__dirname, "src")));
 
-// --- ROUTES API ---
-
 app.get("/api/status", (req, res) => {
   res.json({ status: "ok", message: "Backend Six-Huit opérationnel" });
 });
 
-// Authentification
 app.post("/api/auth/register", async (req, res) => {
   try {
     const data = req.body;
@@ -109,8 +105,6 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
-
-// Données Enfant & Streaks
 app.get("/api/child/:id/streak", async (req, res) => {
   try {
     const childId = req.params.id;
@@ -176,7 +170,6 @@ app.post("/api/child/:id/sessions", async (req, res) => {
   }
 });
 
-// --- SPA CATCH-ALL ---
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });

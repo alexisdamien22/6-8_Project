@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 export class UserManager {
   static async create(email, password) {
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Correction : Nom de la table 'adultaccount' et colonne 'username'
     const [result] = await db.query(
       "INSERT INTO adultaccount (username, password) VALUES (?, ?)",
       [email, hashedPassword],
@@ -13,7 +12,6 @@ export class UserManager {
   }
 
   static async findByEmail(email) {
-    // Correction : Nom de la table 'adultaccount' et colonne 'username'
     const [rows] = await db.query(
       "SELECT * FROM adultaccount WHERE username = ?",
       [email],

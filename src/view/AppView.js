@@ -296,4 +296,28 @@ export class AppView {
     this.app.innerHTML = CreateAccountPage.getHTML();
     CreateAccountPage.afterRender();
   }
+  async saveStreakToServer(newStreak) {
+    const activeChildId = localStorage.getItem("activeChildId");
+    if (!activeChildId) return;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    try {
+      const response = await fetch(`/api/child/${activeChildId}/streak`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          streak: parseInt(newStreak),
+          lastDate: today,
+        }),
+      });
+
+      const res = await response.json();
+      if (!res.success) {
+        console.error("Erreur serveur lors de la sauvegarde du streak");
+      }
+    } catch (e) {
+      console.error("Erreur réseau lors de la sauvegarde du streak :", e);
+    }
+  }
 }

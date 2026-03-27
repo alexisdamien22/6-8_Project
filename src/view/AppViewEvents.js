@@ -84,4 +84,9 @@ export function initAppEvents(view) {
   view.app.addEventListener("pointerup", release);
   view.app.addEventListener("pointercancel", release);
   view.app.addEventListener("pointerleave", release);
+  document
+    .getElementById("btn-valider-seance")
+    ?.addEventListener("click", () => {
+      window.appController?.handleSessionValidation();
+    });
 }

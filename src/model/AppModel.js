@@ -198,15 +198,13 @@ export class AppModel {
     if (lastPracticeDate) lastPracticeDate.setHours(0, 0, 0, 0);
 
     if (lastPracticeDate && lastPracticeDate.getTime() === today.getTime()) {
-      return; // Déjà pratiqué aujourd'hui
+      return;
     }
 
-    // La source de vérité est l'état du modèle
     const currentStreak = this.activeChild.streakData?.current_streak || 0;
     const newStreak = currentStreak + 1;
     const todayStr = new Date().toISOString().split("T")[0];
 
-    // Mettre à jour l'état du modèle
     if (this.activeChild.streakData) {
       this.activeChild.streakData.current_streak = newStreak;
       this.activeChild.streakData.last_practice_date = todayStr;
@@ -217,7 +215,6 @@ export class AppModel {
       };
     }
 
-    // Mettre à jour également l'item localStorage que la vue utilise pour le header
     localStorage.setItem("strik", newStreak.toString());
 
     const activeChildId = localStorage.getItem("activeChildId");
