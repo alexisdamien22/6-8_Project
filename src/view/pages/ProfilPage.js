@@ -1,14 +1,21 @@
 import { AppFireChange } from "../AppFireChange.js";
+import { esc } from "../../utils/FormHelpers.js";
 
 export const ProfilPage = {
   getHTML: (data) => {
-    const mascot = data?.mascotte || "👤";
-    const name = data?.name || "Profil";
-    const currentStreak =
-      data?.streakData?.current_streak || localStorage.getItem("streak") || "0";
-    const instrument = data?.instrument
-      ? data.instrument.charAt(0).toUpperCase() + data.instrument.slice(1)
+    // Nettoyage de sécurité sur les données entrées par l'utilisateur
+    const mascot = esc(data?.mascotte) || "👤";
+    const name = esc(data?.name) || "Profil";
+    const rawInstrument = esc(data?.instrument);
+    const instrument = rawInstrument
+      ? rawInstrument.charAt(0).toUpperCase() + rawInstrument.slice(1)
       : "-";
+
+    // Récupération de la série
+    const currentStreak = parseInt(
+      data?.streakData?.current_streak || localStorage.getItem("streak") || "0",
+      10,
+    );
 
     return `
       <div class="profile-page">
@@ -16,12 +23,12 @@ export const ProfilPage = {
           ${mascot}
         </div>
         <p class="profil-name">${name}</p>
-
+        
         <div class="stats-row">
           <div class="card">
             <h3>Série actuelle</h3>
             <div class="strik" style="margin-top: 10px; justify-content: center;">
-              <img class="strik-icon" src="${AppFireChange.FireTextur(parseInt(currentStreak))}" alt="flame">
+              <img class="strik-icon" src="${AppFireChange.FireTextur(currentStreak)}" alt="flame">
               <span class="strik-text">${currentStreak}</span>
             </div>
           </div>

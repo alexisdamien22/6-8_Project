@@ -97,11 +97,7 @@ export class AppView {
     const streakText = document.querySelector(".strik-text");
     const streakIcon = document.querySelector(".strik-icon");
     const streakValue =
-      value !== null
-        ? value
-        : localStorage.getItem("streak") ||
-          localStorage.getItem("strik") ||
-          "0";
+      value !== null ? value : localStorage.getItem("streak") || "0";
 
     if (streakText) {
       streakText.textContent = streakValue;
@@ -129,63 +125,13 @@ export class AppView {
     this.renderPageTitle("Musique");
   }
 
+  // --- Les fonctions sont maintenant 100% propres et appellent les bons fichiers ---
   renderSettings() {
-    const isLightMode = document.body.classList.contains("light-mode");
-
-    this.app.innerHTML = `
-      <div style="padding-top: 12dvh; text-align: center; color: var(--color-text-main);">
-        <h1>Paramètres</h1>
-        <p>Gérez vos options ici.</p>
-        <div class="theme-switch-wrapper">
-          <span>Sombre</span>
-          <label class="theme-switch" for="theme-checkbox">
-            <input type="checkbox" id="theme-checkbox" ${isLightMode ? "checked" : ""}>
-            <div class="slider"></div>
-          </label>
-          <span>Clair</span>
-        </div>
-      </div>
-    `;
+    this.app.innerHTML = SettingsPage.getHTML();
   }
 
   renderProfil(data) {
-    const mascot = data?.mascotte || "👤";
-    const name = data?.name || "Profil";
-    const currentStreak =
-      data?.streakData?.current_streak ||
-      localStorage.getItem("streak") ||
-      localStorage.getItem("strik") ||
-      "0";
-    const instrument = data?.instrument
-      ? data.instrument.charAt(0).toUpperCase() + data.instrument.slice(1)
-      : "-";
-
-    this.app.innerHTML = `
-      <div class="profile-page">
-        <div class="profil-img" style="display: flex; align-items: center; justify-content: center; font-size: 4rem;">
-          ${mascot}
-        </div>
-        <p class="profil-name">${name}</p>
-        
-        <div class="stats-row">
-          <div class="card">
-            <h3>Série actuelle</h3>
-            <div class="strik" style="margin-top: 10px; justify-content: center;">
-              <img class="strik-icon" src="${AppFireChange.FireTextur(parseInt(currentStreak))}" alt="flame">
-              <span class="strik-text">${currentStreak}</span>
-            </div>
-          </div>
-          <div class="card">
-            <h3>Instrument</h3>
-            <p style="font-size: 1.2rem; margin-top: 10px;">${instrument}</p>
-          </div>
-        </div>
-
-        <div class="history-section">
-          <h3>Historique des séances</h3>
-        </div>
-      </div>
-    `;
+    this.app.innerHTML = ProfilPage.getHTML(data);
   }
 
   renderCreateAccount() {

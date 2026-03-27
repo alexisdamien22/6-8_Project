@@ -75,8 +75,9 @@ export class AppModel {
     if (typeof plan === "string") {
       try {
         plan = JSON.parse(plan);
-      } catch {
-        plan = plan.split(",").map((s) => s.trim().replace(/['"\[\]]/g, ""));
+      } catch (error) {
+        console.warn("Format du plan hebdomadaire invalide, réinitialisation.");
+        plan = [];
       }
     }
 
