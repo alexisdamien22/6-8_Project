@@ -3,7 +3,7 @@ export const AppViewNavigation = {
     const footer = document.querySelector(".main-footer");
     const icons = document.querySelectorAll(".icon-footer");
 
-    if (!footer || icons.length === 0) return;
+    if (!footer || icons.length === 0 || !icons[index]) return;
 
     let slider = footer.querySelector(".footer-slider");
     if (!slider) {
@@ -13,7 +13,6 @@ export const AppViewNavigation = {
     }
 
     const icon = icons[index];
-    if (!icon) return;
 
     requestAnimationFrame(() => {
       slider.style.transition = animated
@@ -32,30 +31,38 @@ export const AppViewNavigation = {
 
   createBottomMenu(view) {
     if (document.getElementById("bottom-menu-container")) return;
+
     const menuHTML = `
-        <div id="bottom-menu-container" class="bottom-menu-container">
-            <div class="bottom-menu-overlay"></div>
-            <div class="bottom-menu-sheet">
-                <div class="bottom-menu-item" id="btn-compte"><span>Compte</span></div>
-                <div class="bottom-menu-item" id="btn-parametre-menu"><span>Paramètres</span></div>
-            </div>
-        </div>`;
+      <div id="bottom-menu-container" class="bottom-menu-container">
+        <div class="bottom-menu-overlay"></div>
+        <div class="bottom-menu-sheet">
+          <div class="bottom-menu-item" id="btn-compte"><span>Compte</span></div>
+          <div class="bottom-menu-item" id="btn-parametre-menu"><span>Paramètres</span></div>
+        </div>
+      </div>`;
+
     document.body.insertAdjacentHTML("beforeend", menuHTML);
 
     const container = document.getElementById("bottom-menu-container");
-    container.querySelector(".bottom-menu-overlay").onclick = () =>
-      view.toggleBottomMenu(false);
 
-    container.querySelector("#btn-parametre-menu").onclick = () => {
-      view.toggleBottomMenu(false, true);
-      view.syncFooter(3);
-      window.appController?.navigateToPage("settings");
-    };
+    container
+      .querySelector(".bottom-menu-overlay")
+      .addEventListener("click", () => {
+        view.toggleBottomMenu(false);
+      });
 
-    container.querySelector("#btn-compte").onclick = () => {
+    container
+      .querySelector("#btn-parametre-menu")
+      .addEventListener("click", () => {
+        view.toggleBottomMenu(false, true);
+        view.syncFooter(3);
+        window.appController?.navigateToPage("settings");
+      });
+
+    container.querySelector("#btn-compte").addEventListener("click", () => {
       view.toggleBottomMenu(false, true);
       view.syncFooter(3);
       window.appController?.navigateToPage("profil");
-    };
+    });
   },
 };

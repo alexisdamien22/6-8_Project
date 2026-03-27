@@ -1,50 +1,21 @@
 const CACHE_NAME = "six-huit-v1";
-const urlsToCache = [
-  "./",
-  "./index.html",
-  "./src/model/AppModel.js",
-  "./src/view/pages/HomePage.js",
-  "./src/view/pages/PodiumPage.js",
-  "./src/view/pages/MusicPage.js",
-  "./src/view/pages/ProfilPage.js",
-  "./src/view/pages/SettingsPage.js",
-  "./src/view/AppView.js",
-  "./src/controller/AppController.js",
-  "./src/view/header.html",
-  "./src/view/footer.html",
-  "./assets/css/style.css",
-  "./assets/img/icons/home.png",
-  "./assets/img/icons/podium.png",
-  "./assets/img/icons/music.png",
-  "./assets/img/icons/menu.png",
-  "./assets/img/icons/app-icon-86.png",
-  "./assets/img/mascottes/camelion.png",
-  "./manifest.json",
+
+const ASSETS_TO_CACHE = [
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/assets/css/style.css",
+  "/assets/img/icons/home.png",
+  "/assets/img/icons/podium.png",
+  "/assets/img/icons/music.png",
+  "/assets/img/icons/menu.png",
+  "/assets/img/icons/app-icon-86.png",
+  "/assets/img/mascottes/camelion.png",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)),
-  );
-});
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-
-  if (event.request.url.includes("/api/")) return;
-
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      }),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)),
   );
 });
 
@@ -59,6 +30,29 @@ self.addEventListener("activate", (event) => {
         }),
       );
     }),
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET" || event.request.url.includes("/api/")) {
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        if (!response || response.status !== 200 || response.type !== "basic") {
+          return response;
+        }
+
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseClone);
+        });
+
+        return response;
+      })
+      .catch(() => caches.match(event.request)),
   );
 });
 

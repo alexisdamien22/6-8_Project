@@ -2,34 +2,41 @@ import { AppViewTheme } from "./AppViewTheme.js";
 
 export function initAppEvents(view) {
   document.addEventListener("change", (e) => {
-    if (e.target.id === "theme-checkbox") AppViewTheme.toggle(e.target.checked);
+    if (e.target.id === "theme-checkbox") {
+      AppViewTheme.toggle(e.target.checked);
+    }
   });
 
   document.addEventListener("click", (e) => {
     const bottomMenu = document.getElementById("bottom-menu-container");
+
     if (bottomMenu?.classList.contains("show")) {
       const clickedIcon = e.target.closest(".icon-footer");
-      const icons = Array.from(document.querySelectorAll(".icon-footer"));
-      const isMenuIcon = clickedIcon && icons.indexOf(clickedIcon) === 3;
-      if (!e.target.closest(".bottom-menu-sheet") && !isMenuIcon)
+      const isMenuIcon = clickedIcon && clickedIcon.dataset?.page === "menu";
+
+      if (!e.target.closest(".bottom-menu-sheet") && !isMenuIcon) {
         view.toggleBottomMenu(false);
+      }
     }
 
     const paramBtn = e.target.closest(".parametre");
     if (paramBtn) {
-      let rot = parseInt(paramBtn.dataset.rotation || "0", 10) + 360;
+      const rot = parseInt(paramBtn.dataset.rotation || "0", 10) + 360;
       paramBtn.dataset.rotation = rot;
       paramBtn.style.transform = `rotate(${rot}deg)`;
       window.appController?.navigateToPage("settings");
       view.syncFooter(3);
+    }
+
+    if (e.target.closest("#btn-valider-seance")) {
+      window.appController?.handleSessionValidation();
     }
   });
 
   view.app.addEventListener("click", (e) => {
     const startBtn = e.target.closest(".start-btn");
     if (startBtn && !startBtn.disabled) {
-      window.appController?.model.completeCurrentSession();
-      window.appController?.navigateToPage("home");
+      window.appController?.handleSessionValidation();
       return;
     }
 
@@ -44,12 +51,14 @@ export function initAppEvents(view) {
     if (pathDot) {
       const step = pathDot.closest(".path-step");
       const popup = step.querySelector(".duo-popup");
+
       document
         .querySelectorAll(".path-step")
         .forEach((s) => (s.style.zIndex = "1"));
-      document
-        .querySelectorAll(".duo-popup")
-        .forEach((p) => p !== popup && p.classList.remove("show"));
+      document.querySelectorAll(".duo-popup").forEach((p) => {
+        if (p !== popup) p.classList.remove("show");
+      });
+
       popup.classList.toggle("show");
       step.style.zIndex = popup.classList.contains("show") ? "999" : "1";
     } else {
@@ -70,23 +79,20 @@ export function initAppEvents(view) {
     }
   });
 
-  const release = (e) => {
+  const handlePointerRelease = (e) => {
     document
       .querySelectorAll(".path-button-container.pressed")
       .forEach((btn) => {
         btn.classList.remove("pressed");
-        if (e?.pointerId)
+        if (e?.pointerId) {
           try {
             btn.releasePointerCapture(e.pointerId);
           } catch (err) {}
+        }
       });
   };
-  view.app.addEventListener("pointerup", release);
-  view.app.addEventListener("pointercancel", release);
-  view.app.addEventListener("pointerleave", release);
-  document
-    .getElementById("btn-valider-seance")
-    ?.addEventListener("click", () => {
-      window.appController?.handleSessionValidation();
-    });
+
+  view.app.addEventListener("pointerup", handlePointerRelease);
+  view.app.addEventListener("pointercancel", handlePointerRelease);
+  view.app.addEventListener("pointerleave", handlePointerRelease);
 }

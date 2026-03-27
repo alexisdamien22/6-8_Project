@@ -1,5 +1,5 @@
 export const MusicPage = {
-  getHTML: function () {
+  getHTML: () => {
     return `
       <div style="padding-top: 12dvh; text-align: center; color: var(--color-text-main);">
         <h1>Musique</h1>

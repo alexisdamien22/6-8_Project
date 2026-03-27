@@ -1,9 +1,9 @@
 import mysql from "mysql2/promise";
 
-export const db = await mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "six_huit_production",
-    connectionLimit: 10,
+export const db = mysql.createPool({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "six_huit_production",
+  connectionLimit: 10,
 });

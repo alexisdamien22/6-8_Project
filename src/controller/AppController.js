@@ -34,10 +34,7 @@ export class AppController {
 
     switch (pageName) {
       case "home":
-        const homeData = this.model.getChildData();
-        if (homeData) {
-          this.view.renderHome(homeData);
-        }
+        this.view.renderHome(this.model.getChildData());
         break;
       case "podium":
         this.view.renderPodium();
@@ -49,8 +46,7 @@ export class AppController {
         this.view.renderSettings();
         break;
       case "profil":
-        const profilData = this.model.getChildData();
-        this.view.renderProfil(profilData);
+        this.view.renderProfil(this.model.getChildData());
         break;
       case "createAccount":
         this.view.renderCreateAccount();
@@ -61,30 +57,21 @@ export class AppController {
   updateHash(pageName) {
     window.location.hash = pageName;
   }
+
   async handleSessionValidation() {
-    const childData = this.model.getChildData();
-    if (!childData) return;
-
-    const currentStreak = parseInt(localStorage.getItem("strik") || "0");
-    const newStreak = currentStreak + 1;
-    const today = new Date().toISOString().split("T")[0];
-
     try {
-      await this.view.saveStreakToServer(newStreak);
+      await this.model.completeCurrentSession();
 
-      localStorage.setItem("strik", newStreak);
-
-      if (childData.streakData) {
-        childData.streakData.current_streak = newStreak;
-        childData.streakData.last_practice_date = today;
+      const childData = this.model.getChildData();
+      if (childData && childData.streakData) {
+        if (typeof this.view.updateHeaderStreak === "function") {
+          this.view.updateHeaderStreak(childData.streakData.current_streak);
+        }
       }
-
-      this.view.updateHeaderStreak();
 
       this.navigateToPage("home");
     } catch (error) {
-      console.error("Erreur lors de la validation :", error);
-      alert("Impossible de sauvegarder ta séance.");
+      console.error(error);
     }
   }
 }

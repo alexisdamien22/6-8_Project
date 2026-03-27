@@ -1,5 +1,5 @@
 export const SettingsPage = {
-  getHTML: function () {
+  getHTML: () => {
     const isLightMode = document.body.classList.contains("light-mode");
 
     return `

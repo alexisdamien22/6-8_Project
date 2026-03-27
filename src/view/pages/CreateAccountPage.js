@@ -8,72 +8,73 @@ import {
 } from "../../constants/CreateAccountConstants.js";
 import { esc, isStepValid } from "../../utils/FormHelpers.js";
 
-let _step = 1;
-let _isLoginMode = true;
-let _isLoading = false;
-let _loginState = { email: "", password: "" };
-let _state = {
-  name: "",
-  age: "",
-  instrument: "",
-  duree: "",
-  ecole: "",
-  mascotte: "",
-  jours: [],
-  email: "",
-  password: "",
+const state = {
+  step: 1,
+  isLoginMode: true,
+  isLoading: false,
+  loginData: { email: "", password: "" },
+  registerData: {
+    name: "",
+    age: "",
+    instrument: "",
+    duree: "",
+    ecole: "",
+    mascotte: "",
+    jours: [],
+    email: "",
+    password: "",
+  },
 };
 
-function buildFormContent(step) {
-  if (_isLoginMode) {
+function buildFormContent() {
+  if (state.isLoginMode) {
     return `
-    <p class="ca-question">Content de te revoir !</p>
-    <form id="ca-login-form" onsubmit="return false;">
-      <input class="ca-input" type="email" autocomplete="username" id="log-email" 
-        placeholder="Ton email" value="${esc(_loginState.email)}"
-        oninput="window.__log_input('email', this.value)">
-      <input class="ca-input" type="password" autocomplete="current-password" id="log-pass" 
-        placeholder="Ton mot de passe" value="${esc(_loginState.password)}"
-        oninput="window.__log_input('password', this.value)">
-    </form>
-    <a href="#" class="ca-forgot-pass">Mot de passe oublié ?</a>`;
+      <p class="ca-question">Content de te revoir !</p>
+      <form id="ca-login-form" onsubmit="return false;">
+        <input class="ca-input login-input" type="email" autocomplete="username" data-field="email" 
+          placeholder="Ton email" value="${esc(state.loginData.email)}">
+        <input class="ca-input login-input" type="password" autocomplete="current-password" data-field="password" 
+          placeholder="Ton mot de passe" value="${esc(state.loginData.password)}">
+      </form>
+      <a href="#" class="ca-forgot-pass">Mot de passe oublié ?</a>`;
   }
-  switch (step) {
+
+  switch (state.step) {
     case 1:
       return `
         <p class="ca-question">Infos du <em>parent</em> (pour le compte)</p>
-        <input class="ca-input" type="email" placeholder="Email du parent" value="${esc(_state.email)}" oninput="window.__ca_input('email', this.value)">
-        <input class="ca-input" type="password" placeholder="Mot de passe (8+ car.)" value="${esc(_state.password)}" oninput="window.__ca_input('password', this.value)">
+        <input class="ca-input reg-input" type="email" data-field="email" placeholder="Email du parent" value="${esc(state.registerData.email)}">
+        <input class="ca-input reg-input" type="password" data-field="password" placeholder="Mot de passe (8+ car.)" value="${esc(state.registerData.password)}">
         <p class="ca-question" style="margin-top: 24px;">Quel est ton <em>prénom</em> ?</p>
-        <input class="ca-input" type="text" placeholder="Prénom de l'enfant" value="${esc(_state.name)}" oninput="window.__ca_input('name', this.value)">`;
+        <input class="ca-input reg-input" type="text" data-field="name" placeholder="Prénom de l'enfant" value="${esc(state.registerData.name)}">`;
     case 2:
       return `<p class="ca-question">Quel est ton <em>âge</em> ?</p>
-              <input class="ca-input" type="number" placeholder="Âge" value="${esc(_state.age)}" oninput="window.__ca_input('age', this.value)">`;
+              <input class="ca-input reg-input" type="number" data-field="age" placeholder="Âge" value="${esc(state.registerData.age)}">`;
     case 3:
       const cards = INSTRUMENTS.map(
         (ins) => `
-        <div class="ca-instr-card${_state.instrument === ins.id ? " sel" : ""}" onclick="window.__ca_pick('instrument','${ins.id}', event)">
-          <div class="ca-instr-icon"><img src="${ins.png}" /></div>
+        <div class="ca-instr-card ${state.registerData.instrument === ins.id ? "sel" : ""}" data-id="${ins.id}">
+          <div class="ca-instr-icon"><img src="${ins.png}" alt="${ins.lbl}"/></div>
           <span class="ca-instr-lbl">${ins.lbl}</span>
         </div>`,
       ).join("");
       return `<p class="ca-question">Quel <em>instrument</em> ?</p><div class="ca-instr-grid">${cards}</div>`;
     case 4:
       return `<p class="ca-question">Depuis <em>combien d'années</em> pratiques-tu ?</p>
-              <input class="ca-input" type="number" value="${esc(_state.duree)}" oninput="window.__ca_input('duree', this.value)">`;
+              <input class="ca-input reg-input" type="number" data-field="duree" value="${esc(state.registerData.duree)}">`;
     case 5:
       return `<p class="ca-question">Ton <em>école</em> ou conservatoire ?</p>
-              <input class="ca-input" type="text" value="${esc(_state.ecole)}" oninput="window.__ca_input('ecole', this.value)">`;
+              <input class="ca-input reg-input" type="text" data-field="ecole" value="${esc(state.registerData.ecole)}">`;
     case 6:
       const cells = MASCOTTES.map(
         (m) => `
-        <div class="ca-mascot-cell${_state.mascotte === m ? " sel" : ""}" onclick="window.__ca_pick('mascotte','${m}', event)">${m}</div>`,
+        <div class="ca-mascot-cell ${state.registerData.mascotte === m ? "sel" : ""}" data-mascot="${m}">${m}</div>`,
       ).join("");
       return `<p class="ca-question">Choisis une <em>mascotte</em> !</p><div class="ca-mascot-grid">${cells}</div>`;
     case 7:
       const pills = JOURS.map(
         (j) => `
-        <button class="ca-day-pill${_state.jours.includes(j) ? " sel" : ""}" onclick="window.__ca_toggleDay('${j}')">${j}</button>`,
+        <button class="ca-day-pill ${state.registerData.jours.includes(j) ? "sel" : ""}" data-day="${j}">${j}</button>`,
       ).join("");
       return `<p class="ca-question">Quels jours vas-tu <em>travailler</em> ?</p><div class="ca-days-row">${pills}</div>`;
     default:
@@ -83,36 +84,38 @@ function buildFormContent(step) {
 
 export const CreateAccountPage = {
   getHTML() {
-    if (!_isLoginMode && _step === 8) {
-      return `<div class="ca-screen ca-success">
+    if (!state.isLoginMode && state.step === 8) {
+      return `
+        <div class="ca-screen ca-success">
           <div class="ca-success-body">
-            <div class="ca-success-mascot">${_state.mascotte || "🎵"}</div>
-            <h2 class="ca-success-title">Bienvenue, ${esc(_state.name)} !</h2>
+            <div class="ca-success-mascot">${state.registerData.mascotte || "🎵"}</div>
+            <h2 class="ca-success-title">Bienvenue, ${esc(state.registerData.name)} !</h2>
           </div>
           <div class="ca-footer"><button class="ca-btn-next" id="ca-btn-start">Commencer l'aventure 🚀</button></div>
         </div>`;
     }
 
-    const title = _isLoginMode ? "Connexion" : "Création de compte";
-    const subTitle = _isLoginMode
+    const title = state.isLoginMode ? "Connexion" : "Création de compte";
+    const subTitle = state.isLoginMode
       ? "Connecte-toi pour continuer"
-      : `${_step}/${TOTAL_STEPS}`;
-    let btnLabel = _isLoginMode
+      : `${state.step}/${TOTAL_STEPS}`;
+
+    let btnLabel = state.isLoginMode
       ? "Se connecter"
-      : _step === TOTAL_STEPS
+      : state.step === TOTAL_STEPS
         ? "Terminé !"
         : "Suivant";
-    if (_isLoading) btnLabel = `<span class="ca-spinner"></span>`;
+    if (state.isLoading) btnLabel = `<span class="ca-spinner"></span>`;
 
-    const illus = _isLoginMode
+    const illus = state.isLoginMode
       ? { png: ICONS.guitare, lbl: "Prêt ?" }
-      : STEP_ILLUS[_step];
+      : STEP_ILLUS[state.step];
     const valid = isStepValid(
-      _step,
-      _isLoginMode,
-      _isLoading,
-      _state,
-      _loginState,
+      state.step,
+      state.isLoginMode,
+      state.isLoading,
+      state.registerData,
+      state.loginData,
     );
 
     return `
@@ -120,121 +123,152 @@ export const CreateAccountPage = {
         <div class="ca-content">
           <h1 class="ca-title">${title}</h1>
           <p class="ca-step-label">${subTitle}</p>
-          <div class="ca-illus-wrap"><img src="${illus.png}" /> <span class="ca-illus-name">${illus.lbl}</span></div>
-          <div class="ca-form-block">${buildFormContent(_step)}</div>
+          <div class="ca-illus-wrap"><img src="${illus.png}" alt="${illus.lbl}"/> <span class="ca-illus-name">${illus.lbl}</span></div>
+          <div class="ca-form-block">${buildFormContent()}</div>
           <button class="ca-btn-next" id="ca-main-btn" ${valid ? "" : "disabled"}>${btnLabel}</button>
         </div>
         <div class="ca-footer">
-          <p class="ca-login-hint">${_isLoginMode ? 'Nouveau ici ? <a href="#" id="ca-switch-mode">Crée un compte !</a>' : 'Déjà inscrit ? <a href="#" id="ca-switch-mode">Connecte-toi !</a>'}</p>
+          <p class="ca-login-hint">
+            ${
+              state.isLoginMode
+                ? 'Nouveau ici ? <a href="#" id="ca-switch-mode">Crée un compte !</a>'
+                : 'Déjà inscrit ? <a href="#" id="ca-switch-mode">Connecte-toi !</a>'
+            }
+          </p>
         </div>
       </div>`;
   },
 
   afterRender() {
-    document
-      .getElementById("ca-switch-mode")
-      ?.addEventListener("click", (e) => {
+    this.attachEventListeners();
+  },
+
+  attachEventListeners() {
+    const switchModeBtn = document.getElementById("ca-switch-mode");
+    if (switchModeBtn) {
+      switchModeBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        if (_isLoading) return;
-        _isLoginMode = !_isLoginMode;
-        _step = 1;
+        if (state.isLoading) return;
+        state.isLoginMode = !state.isLoginMode;
+        state.step = 1;
         window.appController?.navigateToPage("createAccount");
       });
+    }
 
-    document
-      .getElementById("ca-main-btn")
-      ?.addEventListener("click", async () => {
-        if (
-          !isStepValid(_step, _isLoginMode, _isLoading, _state, _loginState) ||
-          _isLoading
-        )
-          return;
+    const mainBtn = document.getElementById("ca-main-btn");
+    if (mainBtn) {
+      mainBtn.addEventListener("click", () => this.handleMainAction());
+    }
 
-        if (_isLoginMode || _step === TOTAL_STEPS) {
-          _isLoading = true;
-          this.updateBtnLoading(true);
+    document.querySelectorAll(".login-input").forEach((input) => {
+      input.addEventListener("input", (e) => {
+        state.loginData[e.target.dataset.field] = e.target.value;
+        this.refreshBtn();
+      });
+    });
 
-          try {
-            const url = _isLoginMode ? "/api/auth/login" : "/api/auth/register";
-            const body = _isLoginMode ? _loginState : _state;
-            const response = await fetch(url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(body),
-            });
-            const res = await response.json();
+    document.querySelectorAll(".reg-input").forEach((input) => {
+      input.addEventListener("input", (e) => {
+        state.registerData[e.target.dataset.field] = e.target.value;
+        this.refreshBtn();
+      });
+    });
 
-            if (res.success) {
-              localStorage.setItem("jwt_token", res.token);
-              localStorage.setItem("activeChildId", res.childId);
-              window.appController?.model.login();
-              if (!_isLoginMode) {
-                _step = 8;
-                _isLoading = false;
-                window.appController?.navigateToPage("createAccount");
-              } else {
-                _isLoading = false;
-                window.appController?.navigateToPage("home");
-              }
-            } else {
-              _isLoading = false;
-              alert(res.error || "Erreur");
-              window.appController?.navigateToPage("createAccount");
-            }
-          } catch (err) {
-            _isLoading = false;
-            alert("Erreur réseau");
+    document.querySelectorAll(".ca-instr-card").forEach((card) => {
+      card.addEventListener("click", (e) => {
+        state.registerData.instrument = e.currentTarget.dataset.id;
+        window.appController?.navigateToPage("createAccount");
+      });
+    });
+
+    document.querySelectorAll(".ca-mascot-cell").forEach((cell) => {
+      cell.addEventListener("click", (e) => {
+        state.registerData.mascotte = e.currentTarget.dataset.mascot;
+        window.appController?.navigateToPage("createAccount");
+      });
+    });
+
+    document.querySelectorAll(".ca-day-pill").forEach((pill) => {
+      pill.addEventListener("click", (e) => {
+        const day = e.currentTarget.dataset.day;
+        const idx = state.registerData.jours.indexOf(day);
+        if (idx === -1) state.registerData.jours.push(day);
+        else state.registerData.jours.splice(idx, 1);
+        window.appController?.navigateToPage("createAccount");
+      });
+    });
+  },
+
+  async handleMainAction() {
+    if (
+      !isStepValid(
+        state.step,
+        state.isLoginMode,
+        state.isLoading,
+        state.registerData,
+        state.loginData,
+      ) ||
+      state.isLoading
+    )
+      return;
+
+    if (state.isLoginMode || state.step === TOTAL_STEPS) {
+      state.isLoading = true;
+      window.appController?.navigateToPage("createAccount");
+
+      try {
+        const url = state.isLoginMode
+          ? "/api/auth/login"
+          : "/api/auth/register";
+        const body = state.isLoginMode ? state.loginData : state.registerData;
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const res = await response.json();
+
+        if (res.success) {
+          localStorage.setItem("jwt_token", res.token);
+          localStorage.setItem("activeChildId", res.childId);
+          window.appController?.model.login();
+
+          if (!state.isLoginMode) {
+            state.step = 8;
+            state.isLoading = false;
+            window.appController?.navigateToPage("createAccount");
+          } else {
+            state.isLoading = false;
+            window.appController?.navigateToPage("home");
           }
         } else {
-          _step++;
+          state.isLoading = false;
+          alert(res.error || "Une erreur est survenue.");
           window.appController?.navigateToPage("createAccount");
         }
-      });
-
-    // Global listeners for inputs
-    window.__log_input = (k, v) => {
-      _loginState[k] = v;
-      this.refreshBtn();
-    };
-    window.__ca_input = (k, v) => {
-      _state[k] = v;
-      this.refreshBtn();
-    };
-    window.__ca_pick = (k, v, e) => {
-      _state[k] = v;
-      document
-        .querySelectorAll(
-          k === "instrument" ? ".ca-instr-card" : ".ca-mascot-cell",
-        )
-        .forEach((c) => c.classList.remove("sel"));
-      e.currentTarget.classList.add("sel");
-      this.refreshBtn();
-    };
-    window.__ca_toggleDay = (j) => {
-      const idx = _state.jours.indexOf(j);
-      if (idx === -1) _state.jours.push(j);
-      else _state.jours.splice(idx, 1);
-      document.querySelector(".ca-form-block").innerHTML =
-        buildFormContent(_step);
-      this.refreshBtn();
-    };
+      } catch (err) {
+        state.isLoading = false;
+        alert("Erreur réseau. Veuillez vérifier votre connexion.");
+        window.appController?.navigateToPage("createAccount");
+      }
+    } else {
+      state.step++;
+      window.appController?.navigateToPage("createAccount");
+    }
   },
 
   refreshBtn() {
     const btn = document.getElementById("ca-main-btn");
-    if (btn)
+    if (btn) {
       btn.disabled = !isStepValid(
-        _step,
-        _isLoginMode,
-        _isLoading,
-        _state,
-        _loginState,
+        state.step,
+        state.isLoginMode,
+        state.isLoading,
+        state.registerData,
+        state.loginData,
       );
-  },
-
-  updateBtnLoading(loading) {
-    const btn = document.getElementById("ca-main-btn");
-    if (btn && loading)
-      btn.innerHTML = `<span class="ca-loading-dots">Chargement<span>.</span><span>.</span><span>.</span></span>`;
+    }
   },
 };

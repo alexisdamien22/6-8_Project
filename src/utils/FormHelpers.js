@@ -1,40 +1,45 @@
 export function esc(s) {
-  return String(s ?? "")
+  if (s == null) return "";
+  return String(s)
     .replace(/&/g, "&amp;")
     .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;");
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 export function isStepValid(step, isLoginMode, isLoading, state, loginState) {
   if (isLoading) return false;
 
   if (isLoginMode) {
-    return loginState.email.includes("@") && loginState.password.length >= 4;
+    return Boolean(
+      loginState?.email?.includes("@") && loginState?.password?.length >= 4,
+    );
   }
-
-  const isParentInfoValid =
-    state.email.includes("@") && state.password.length >= 4;
 
   switch (step) {
     case 1:
-      return state.name.trim().length >= 2 && isParentInfoValid;
+      return Boolean(
+        state.name?.trim().length >= 2 &&
+        state.email?.includes("@") &&
+        state.password?.length >= 8,
+      );
     case 2: {
-      const a = parseInt(state.age);
-      return !isNaN(a) && a >= 5 && a <= 99;
+      const age = parseInt(state.age, 10);
+      return !isNaN(age) && age >= 5 && age <= 99;
     }
     case 3:
-      return state.instrument !== "";
+      return Boolean(state.instrument);
     case 4: {
-      const d = parseInt(state.duree);
-      const a = parseInt(state.age);
-      return !isNaN(d) && d >= 0 && d <= a;
+      const duree = parseInt(state.duree, 10);
+      const age = parseInt(state.age, 10);
+      return !isNaN(duree) && duree >= 0 && duree <= age;
     }
     case 5:
-      return state.ecole.trim().length > 0;
+      return Boolean(state.ecole?.trim().length > 0);
     case 6:
-      return state.mascotte !== "";
+      return Boolean(state.mascotte);
     case 7:
-      return state.jours.length > 0;
+      return Array.isArray(state.jours) && state.jours.length > 0;
     default:
       return false;
   }

@@ -1,72 +1,89 @@
-# 6-8_Project
+# 🎵 Six-Huit | Apprentissage Musical
 
-## Installation et démarrage
+Une application web ludique et interactive destinée à accompagner les enfants (6-8 ans) dans leur apprentissage musical au quotidien.
 
-1. Installer les dépendances :
+Ce projet est construit sur une architecture **MVC (Modèle-Vue-Contrôleur)** stricte en Vanilla JavaScript côté client, propulsée par une API RESTful **Node.js / Express** et une base de données **MySQL**.
 
-```bash
+## 🚀 Fonctionnalités principales
+
+- **Parcours d'apprentissage interactif** : Suivi visuel des leçons quotidiennes.
+- **Système de Streaks (Séries)** : Gamification pour encourager la pratique régulière (flammes dynamiques).
+- **Profils enfants personnalisables** : Choix de mascottes, instruments (Guitare, Violon, Flûte, etc.) et jours de pratique.
+- **Comptes Parents / Enfants** : Sécurisation par JWT et gestion des permissions.
+- **Support PWA (Progressive Web App)** : Utilisable hors-ligne grâce au Service Worker (`sw.js`).
+- **Mode Sombre / Clair** : Support natif avec persistance des préférences.
+
+## 🛠️ Technologies utilisées
+
+- **Frontend** : HTML5, CSS3, JavaScript (Vanilla ES6+), Architecture MVC
+- **Backend** : Node.js, Express.js
+- **Base de données** : MySQL (via `mysql2/promise`)
+- **Sécurité** : JWT (JSON Web Tokens), `bcryptjs`, variables d'environnement (`dotenv`)
+
+## ⚙️ Prérequis
+
+Avant de lancer le projet, assurez-vous d'avoir installé :
+
+- [Node.js](https://nodejs.org/) (v16 ou supérieur)
+- [MySQL](https://www.mysql.com/) (v8 ou supérieur)
+
+## 📦 Installation et Lancement
+
+**1. Cloner le projet et installer les dépendances**
+\`\`\`bash
+git clone <[url-de-repo](https://github.com/alexisdamien22/6-8_Project.git)>
+cd 6-8_Project-betterConnection
 npm install
-```
+\`\`\`
 
-2. Démarrer le serveur :
+**2. Configurer la base de données**
 
-```bash
-npm start
-# Ou pour un port spécifique (si 3000 occupé) :
-PORT=3002 npm start
-```
+- Créez une base de données nommée `six_huit_production` dans MySQL.
+- Importez le fichier de structure fourni :
+  \`\`\`bash
+  mysql -u root -p six_huit_production < public/data/6_8_production.sql
+  \`\`\`
 
-3. Ouvrir dans le navigateur :
+**3. Configurer les variables d'environnement**
 
-```
-http://localhost:3000
-# Ou le port utilisé (3000 par défaut, ou spécifié)
-```
+- Créez un fichier `.env` à la racine du projet et ajoutez-y vos informations :
+  \`\`\`env
+  PORT=3000
+  DB_HOST=localhost
+  DB_USER=root
+  DB_PASSWORD=votre_mot_de_passe
+  DB_NAME=six_huit_production
+  JWT_SECRET=votre_cle_secrete_super_securisee
+  \`\`\`
 
-## 🚀 Fonctionnalités PWA
+**4. Démarrer le serveur**
 
-Cette application est maintenant une Progressive Web App (PWA) avec :
+- Pour le développement (avec rechargement automatique via Nodemon) :
+  \`\`\`bash
+  npm run dev
+  \`\`\`
+- Pour la production :
+  \`\`\`bash
+  npm start
+  \`\`\`
 
-- **Installation** : Peut être installée comme une app native
-- **Offline** : Fonctionne sans connexion internet (cache des ressources)
-- **Rapide** : Chargement instantané après la première visite
+L'application sera accessible sur [http://localhost:3000](http://localhost:3000).
 
-### Installation de la PWA
+## 📁 Architecture du projet
 
-#### Sur Chrome/Chromium :
-
-1. Ouvrir `http://localhost:3000` (ou le port utilisé)
-2. Cliquer sur l'icône d'installation dans la barre d'adresse
-3. Ou aller dans les paramètres → "Installer Six-Huit"
-
-#### Sur Firefox :
-
-1. Ouvrir `http://localhost:3000` (ou le port utilisé)
-2. Aller dans le menu (⋮) → "Installer cette application"
-
-#### Sur Safari (iOS) :
-
-1. Ouvrir `http://localhost:3000` (ou le port utilisé)
-2. Appuyer sur le bouton de partage
-3. Sélectionner "Ajouter à l'écran d'accueil"
-
-### Fonctionnalités offline
-
-Une fois installée, l'application fonctionne même sans connexion internet grâce au Service Worker qui met en cache :
-
-- L'interface principale
-- Les styles CSS
-- Les images et icônes
-- Les fichiers JavaScript
-
-## 📱 Utilisation
-
-- Navigation entre les pages : Accueil, Podium, Musique, Menu
-- Clic sur les étapes pour voir les leçons
-- Bouton "COMMENCER" pour démarrer une leçon
-
-## 🛠️ Technologies
-
-- **Frontend** : HTML, CSS, JavaScript (MVC)
-- **Backend** : Node.js + Express
-- **PWA** : Service Worker + Web App Manifest
+\`\`\`text
+├── public/ # Fichiers statiques exposés (CSS, Images, SQL)
+├── src/
+│ ├── constants/ # Constantes de l'application
+│ ├── controller/ # Contrôleurs MVC (Logique de navigation et d'orchestration)
+│ ├── db/ # Connexion à la base de données MySQL
+│ ├── managers/ # Gestionnaires de données (Requêtes SQL)
+│ ├── model/ # Modèles MVC (Gestion des données et état global)
+│ ├── routes/ # Routes de l'API REST Express
+│ ├── utils/ # Fonctions utilitaires (Helpers, formatage)
+│ └── view/ # Vues MVC (Génération du HTML et écouteurs d'événements)
+├── .env # Variables d'environnement (à créer)
+├── index.html # Point d'entrée de la Single Page Application (SPA)
+├── server.js # Point d'entrée du serveur Node.js
+└── sw.js # Service Worker pour la PWA
+\`\`\`

@@ -1,25 +1,37 @@
-export class AppController {
+export class OnboardingController {
+  constructor(model) {
+    this.model = model;
+  }
+
   handleNextStep() {
     const currentStep = this.model.onboardingStep;
 
     if (currentStep === 0) {
-      const name = document.getElementById("ob-name").value;
-      this.model.updateData("name", name);
+      const nameInput = document.getElementById("ob-name");
+      if (nameInput) this.model.updateData("name", nameInput.value);
     } else if (currentStep === 1) {
-      const age = document.getElementById("ob-age").value;
-      this.model.updateData("age", age);
+      const ageInput = document.getElementById("ob-age");
+      if (ageInput) this.model.updateData("age", ageInput.value);
     }
 
     if (currentStep < 6) {
       this.model.onboardingStep++;
-      this.renderOnboarding();
+      if (typeof this.renderOnboarding === "function") {
+        this.renderOnboarding();
+      }
     } else {
       this.finishOnboarding();
     }
   }
 
   async finishOnboarding() {
-    await this.model.saveFullProfile();
-    this.navigateToPage("create-adult");
+    try {
+      await this.model.saveFullProfile();
+      if (this.navigateToPage) {
+        this.navigateToPage("create-adult");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

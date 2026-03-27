@@ -1,5 +1,5 @@
-import { db } from "../db/connection.js";
 import bcrypt from "bcryptjs";
+import { db } from "../db/connection.js";
 
 export class UserManager {
   static async create(email, password) {

@@ -10,7 +10,7 @@ export class WeeklyPlanManager {
   }
 
   static async setDay(childId, day, practice, color) {
-    await db.query(
+    const [result] = await db.query(
       `INSERT INTO weekly_plan (child_id, day_of_week, practice, color)
        VALUES (?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
@@ -18,5 +18,6 @@ export class WeeklyPlanManager {
          color = VALUES(color)`,
       [childId, day, practice, color],
     );
+    return result;
   }
 }

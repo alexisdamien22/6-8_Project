@@ -4,18 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Six-Huit | Apprentissage Musical</title>
-    <link id="css" rel="stylesheet" href="" />
-    <script>
-      document.getElementById("css").href =
-        "/assets/css/style.css?v=" + Date.now();
-    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="manifest" href="/manifest.json" />
     <link
       rel="icon"
-      href="/assets/img/icons/app-icon-86.png?v=2"
+      href="/assets/img/icons/app-icon-86.png"
       type="image/png"
     />
-    <link rel="apple-touch-icon" href="/assets/img/icons/app-icon-86.png?v=2" />
+    <link rel="apple-touch-icon" href="/assets/img/icons/app-icon-86.png" />
+
     <meta
       name="theme-color"
       content="#2563eb"
@@ -46,7 +44,7 @@
             return true;
           }
         } catch (e) {
-          console.error("Erreur partial:", e);
+          console.error(`Erreur de chargement du composant ${url}:`, e);
         }
         return false;
       }
@@ -62,30 +60,24 @@
           const view = new AppView();
           const appController = new AppController(appModel, view);
 
-          window.appModel = appModel;
-          window.view = view;
           window.appController = appController;
 
-          if (view.setupFooterNavigation) {
-            view.setupFooterNavigation();
-          }
-
           await appController.init();
-
-          console.log("Six-Huit initialisé avec succès.");
         } catch (error) {
-          console.error("Erreur au lancement:", error);
+          console.error(
+            "Erreur critique au lancement de l'application:",
+            error,
+          );
         }
       });
-    </script>
 
-    <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
             .register("/sw.js", { scope: "/" })
-            .then((reg) => console.log("SW enregistré:", reg.scope))
-            .catch((err) => console.error("SW erreur:", err));
+            .catch((err) =>
+              console.error("Erreur d'enregistrement du Service Worker:", err),
+            );
         });
       }
     </script>

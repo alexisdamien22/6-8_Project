@@ -4,10 +4,10 @@ export class StreaksManager {
   static async update(childId, streak, lastDate) {
     const [result] = await db.query(
       `INSERT INTO streaks (child_id, current_streak, last_practice_date) 
-             VALUES (?, ?, ?) 
-             ON DUPLICATE KEY UPDATE 
-                current_streak = VALUES(current_streak), 
-                last_practice_date = VALUES(last_practice_date)`,
+       VALUES (?, ?, ?) 
+       ON DUPLICATE KEY UPDATE 
+         current_streak = VALUES(current_streak), 
+         last_practice_date = VALUES(last_practice_date)`,
       [childId, streak, lastDate],
     );
     return result;

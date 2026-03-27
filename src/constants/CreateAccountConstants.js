@@ -29,5 +29,7 @@ export const STEP_ILLUS = {
 };
 
 export const MASCOTTES = ["🦊", "🐱", "🐸", "🐶", "🦋", "🐺", "🦄", "🐼", "🐰"];
+
 export const JOURS = ["L", "Ma", "Me", "J", "V", "S", "D"];
+
 export const TOTAL_STEPS = 7;
