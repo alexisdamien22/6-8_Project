@@ -34,6 +34,7 @@ const TOTAL = 7;
 
 let _step = 1;
 let _isLoginMode = true;
+let _isLoading = false;
 let _loginState = { email: "", password: "" };
 let _state = {
   name: "",
@@ -43,6 +44,8 @@ let _state = {
   ecole: "",
   mascotte: "",
   jours: [],
+  email: "",
+  password: "",
 };
 
 function esc(s) {
@@ -53,12 +56,15 @@ function esc(s) {
 }
 
 function isStepValid() {
+  if (_isLoading) return false;
   if (_isLoginMode) {
     return _loginState.email.includes("@") && _loginState.password.length >= 4;
   }
+  const isParentInfoValid =
+    _state.email.includes("@") && _state.password.length >= 4;
   switch (_step) {
     case 1:
-      return _state.name.trim().length >= 2;
+      return _state.name.trim().length >= 2 && isParentInfoValid;
     case 2: {
       const a = parseInt(_state.age);
       return !isNaN(a) && a >= 5 && a <= 99;
@@ -98,9 +104,18 @@ function buildFormContent(step) {
   }
   switch (step) {
     case 1:
-      return `<p class="ca-question">Quel est ton <em>prénom</em> ?</p>
-              <input class="ca-input" type="text" placeholder="Prénom" value="${esc(_state.name)}"
-                oninput="window.__ca_input('name', this.value)">`;
+      return `
+        <p class="ca-question">Infos du <em>parent</em> (pour le compte)</p>
+        <form onsubmit="return false;">
+          <input class="ca-input" type="email" autocomplete="username" placeholder="Email du parent" value="${esc(_state.email)}"
+            oninput="window.__ca_input('email', this.value)">
+          <input class="ca-input" type="password" autocomplete="new-password" placeholder="Mot de passe (8+ car.)" value="${esc(_state.password)}"
+            oninput="window.__ca_input('password', this.value)">
+        </form>
+        <p class="ca-question" style="margin-top: 24px;">Quel est ton <em>prénom</em> ?</p>
+        <input class="ca-input" type="text" placeholder="Prénom de l'enfant" value="${esc(_state.name)}"
+          oninput="window.__ca_input('name', this.value)">
+      `;
     case 2:
       return `<p class="ca-question">Quel est ton <em>âge</em> ?</p>
               <input class="ca-input" type="number" placeholder="Âge" min="5" max="99" value="${esc(_state.age)}"
@@ -167,11 +182,14 @@ export const CreateAccountPage = {
     const subTitle = _isLoginMode
       ? "Connecte-toi pour continuer"
       : `${_step}/${TOTAL}`;
-    const btnLabel = _isLoginMode
+
+    let btnLabel = _isLoginMode
       ? "Se connecter"
       : _step === TOTAL
         ? "Terminé !"
         : "Suivant";
+    if (_isLoading) btnLabel = `<span class="ca-spinner"></span>`;
+
     const illus = _isLoginMode
       ? { png: ICONS.guitare, lbl: "Prêt ?" }
       : STEP_ILLUS[_step];
@@ -204,6 +222,7 @@ export const CreateAccountPage = {
       .getElementById("ca-switch-mode")
       ?.addEventListener("click", (e) => {
         e.preventDefault();
+        if (_isLoading) return;
         _isLoginMode = !_isLoginMode;
         _step = 1;
         window.appController?.navigateToPage("createAccount");
@@ -212,43 +231,58 @@ export const CreateAccountPage = {
     document
       .getElementById("ca-main-btn")
       ?.addEventListener("click", async () => {
-        if (!isStepValid()) return;
+        if (!isStepValid() || _isLoading) return;
 
-        if (_isLoginMode) {
-          const response = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(_loginState),
-          });
-          const res = await response.json();
-          if (res.success) {
-            localStorage.setItem("activeChildId", res.user.id);
-            window.appController?.model.login();
-            window.appController?.navigateToPage("home");
-          } else {
-            alert("Identifiants incorrects");
+        if (_isLoginMode || _step === TOTAL) {
+          _isLoading = true;
+          const btn = document.getElementById("ca-main-btn");
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<span class="ca-loading-dots">Chargement<span>.</span><span>.</span><span>.</span></span>`;
           }
-        } else {
-          if (_step === TOTAL) {
-            const response = await fetch("/api/signup/child", {
+
+          try {
+            const url = _isLoginMode ? "/api/auth/login" : "/api/auth/register";
+            const body = _isLoginMode ? _loginState : _state;
+
+            const response = await fetch(url, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(_state),
+              body: JSON.stringify(body),
             });
 
-            const result = await response.json();
-            if (result.success) {
-              _step = 8;
-              localStorage.setItem("activeChildId", result.childId);
+            const res = await response.json();
+
+            if (res.success) {
+              localStorage.setItem("jwt_token", res.token);
+              localStorage.setItem("activeChildId", res.childId);
               window.appController?.model.login();
-              window.appController?.navigateToPage("createAccount");
+
+              if (window.appController && window.appController.model) {
+                await window.appController.model.init();
+              }
+
+              if (!_isLoginMode) {
+                _step = 8;
+                _isLoading = false;
+                window.appController?.navigateToPage("createAccount");
+              } else {
+                _isLoading = false;
+                window.appController?.navigateToPage("home");
+              }
             } else {
-              alert("Erreur lors de la création : " + result.error);
+              _isLoading = false;
+              alert(res.error || "Une erreur est survenue");
+              window.appController?.navigateToPage("createAccount");
             }
-          } else {
-            _step++;
+          } catch (err) {
+            _isLoading = false;
+            alert("Erreur réseau");
             window.appController?.navigateToPage("createAccount");
           }
+        } else {
+          _step++;
+          window.appController?.navigateToPage("createAccount");
         }
       });
 
