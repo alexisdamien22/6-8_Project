@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { ChildAccountManager } from "./src/managers/ChildAccountManager.js";
 import { WeeklyPlanManager } from "./src/managers/WeeklyPlanManager.js";
 import { StreaksManager } from "./src/managers/StreaksManager.js";
+import { SessionsManager } from "./src/managers/SessionsManager.js";
 import { db } from "./src/db/connection.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -81,6 +82,72 @@ app.post("/api/login", async (req, res) => {
     } else {
       res.json({ success: false, message: "Utilisateur non trouvé" });
     }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/child/:id/streak", async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const streakData = await StreaksManager.get(childId);
+    res.json({
+      success: true,
+      streak: streakData ? streakData.current_streak : 0,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/api/child/:id/streak", async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const { streak, lastDate } = req.body;
+    await StreaksManager.update(childId, streak, lastDate);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/api/child/:id/sessions", async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const date = new Date().toISOString().split("T")[0];
+    const newSession = await SessionsManager.createSession(
+      childId,
+      date,
+      5,
+      5,
+      1,
+    );
+    res.json({ success: true, session: newSession });
+  } catch (err) {
+    console.error("Erreur API /sessions:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/child/:id/full-data", async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const childData = await ChildAccountManager.getById(childId);
+    if (!childData) {
+      return res.status(404).json({ success: false, error: "Child not found" });
+    }
+
+    const planRows = await WeeklyPlanManager.getPlan(childId);
+    const plan = {};
+    for (const row of planRows) {
+      plan[row.day_of_week] = { practice: row.practice, color: row.color };
+    }
+    const streak = await StreaksManager.get(childId);
+
+    res.json({
+      success: true,
+      data: { ...childData, plan, streak },
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

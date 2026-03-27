@@ -11,6 +11,7 @@ export class ChildAccountManager {
   static async create(data, adultId = null) {
     const age = data.age ? parseInt(data.age, 10) : null;
     const duree = data.duree ? parseInt(data.duree, 10) : null;
+
     const [result] = await db.query(
       "INSERT INTO childaccount (name, adultId, age, instrument, duree, ecole, mascotte) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [

@@ -87,29 +87,59 @@ export class AppView {
     const header = document.querySelector("header, .main-header");
     if (header) {
       header.style.display = "";
-      this.updateHeaderStreak();
     }
+
+    this.updateHeaderStreak();
 
     this.app.innerHTML = HomePage.getHTML(data);
     HomePage.afterRender();
   }
 
-  updateHeaderStreak() {
+  async updateHeaderStreak() {
     const streakText = document.querySelector(".strik-text");
     const streakIcon = document.querySelector(".strik-icon");
 
-    const streakValue = localStorage.getItem("strik") || "0";
+    let streakValue = localStorage.getItem("strik") || "0";
 
-    if (streakText) {
-      streakText.textContent = streakValue;
+    this.updateStreakDisplay(streakText, streakIcon, streakValue);
+
+    const activeChildId = localStorage.getItem("activeChildId");
+    if (activeChildId) {
+      try {
+        const response = await fetch(`/api/child/${activeChildId}/streak`);
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(
+            "Le serveur n'a pas renvoyé de JSON, ancienne mise en cache probable.",
+          );
+        }
+
+        const res = await response.json();
+        if (res.success) {
+          const realStreak = res.streak.toString();
+
+          if (realStreak !== streakValue) {
+            localStorage.setItem("strik", realStreak);
+            this.updateStreakDisplay(streakText, streakIcon, realStreak);
+          }
+        }
+      } catch (e) {
+        console.error("Erreur de synchronisation du streak :", e);
+      }
     }
+  }
 
-    if (streakIcon) {
+  updateStreakDisplay(textElement, iconElement, streakValue) {
+    if (textElement) {
+      textElement.textContent = streakValue;
+    }
+    if (iconElement) {
       const flamePath = AppFireChange.FireTextur(parseInt(streakValue));
-      if (streakIcon.tagName.toLowerCase() === "img") {
-        streakIcon.src = flamePath;
+      if (iconElement.tagName.toLowerCase() === "img") {
+        iconElement.src = flamePath;
       } else {
-        streakIcon.style.backgroundImage = `url('${flamePath}')`;
+        iconElement.style.backgroundImage = `url('${flamePath}')`;
       }
     }
   }
@@ -180,20 +210,23 @@ export class AppView {
     this.app.appendChild(container);
   }
 
-  renderProfil() {
+  renderProfil(data) {
     this.app.textContent = "";
 
     const page = document.createElement("div");
     page.className = "profile-page";
 
-    const img = document.createElement("img");
-    img.className = "profil-img";
-    img.src = "/assets/img/other/base-profil.jpg";
-    img.alt = "Profil";
+    const mascotWrap = document.createElement("div");
+    mascotWrap.className = "profil-img";
+    mascotWrap.style.display = "flex";
+    mascotWrap.style.alignItems = "center";
+    mascotWrap.style.justifyContent = "center";
+    mascotWrap.style.fontSize = "4rem";
+    mascotWrap.textContent = data?.mascotte || "👤";
 
     const name = document.createElement("p");
     name.className = "profil-name";
-    name.textContent = "Shrek Fée";
+    name.textContent = data?.name || "Profil";
 
     const statsRow = document.createElement("div");
     statsRow.className = "stats-row";
@@ -201,14 +234,38 @@ export class AppView {
     const card1 = document.createElement("div");
     card1.className = "card";
     const h1 = document.createElement("h3");
-    h1.textContent = "Récap";
+    h1.textContent = "Série actuelle";
+
+    const streakWrap = document.createElement("div");
+    streakWrap.className = "strik";
+    streakWrap.style.marginTop = "10px";
+    streakWrap.style.justifyContent = "center";
+
+    const streakIcon = document.createElement("img");
+    streakIcon.className = "strik-icon";
+    const streakText = document.createElement("span");
+    streakText.className = "strik-text";
+
+    streakWrap.append(streakIcon, streakText);
+    const currentStreak =
+      data?.streakData?.current_streak || localStorage.getItem("strik") || "0";
+    this.updateStreakDisplay(streakText, streakIcon, currentStreak);
+
     card1.appendChild(h1);
+    card1.appendChild(streakWrap);
 
     const card2 = document.createElement("div");
     card2.className = "card";
     const h2 = document.createElement("h3");
-    h2.textContent = "Meilleurs Amis";
+    h2.textContent = "Instrument";
+    const p2 = document.createElement("p");
+    p2.textContent = data?.instrument
+      ? data.instrument.charAt(0).toUpperCase() + data.instrument.slice(1)
+      : "-";
+    p2.style.fontSize = "1.2rem";
+    p2.style.marginTop = "10px";
     card2.appendChild(h2);
+    card2.appendChild(p2);
 
     statsRow.appendChild(card1);
     statsRow.appendChild(card2);
@@ -221,7 +278,7 @@ export class AppView {
 
     history.appendChild(h3);
 
-    page.appendChild(img);
+    page.appendChild(mascotWrap);
     page.appendChild(name);
     page.appendChild(statsRow);
     page.appendChild(history);

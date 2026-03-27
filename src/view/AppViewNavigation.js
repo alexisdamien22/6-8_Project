@@ -48,11 +48,13 @@ export const AppViewNavigation = {
 
     container.querySelector("#btn-parametre-menu").onclick = () => {
       view.toggleBottomMenu(false, true);
+      view.syncFooter(3);
       window.appController?.navigateToPage("settings");
     };
 
     container.querySelector("#btn-compte").onclick = () => {
       view.toggleBottomMenu(false, true);
+      view.syncFooter(3);
       window.appController?.navigateToPage("profil");
     };
   },

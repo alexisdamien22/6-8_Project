@@ -26,6 +26,13 @@ export function initAppEvents(view) {
   });
 
   view.app.addEventListener("click", (e) => {
+    const startBtn = e.target.closest(".start-btn");
+    if (startBtn && !startBtn.disabled) {
+      window.appController?.model.completeCurrentSession();
+      window.appController?.navigateToPage("home");
+      return;
+    }
+
     if (e.target.closest(".duo-popup")) {
       e.stopImmediatePropagation();
       return;

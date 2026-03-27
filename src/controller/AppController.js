@@ -2,10 +2,10 @@ export class AppController {
   constructor(model, view) {
     this.model = model;
     this.view = view;
-    this.init();
   }
 
-  init() {
+  async init() {
+    await this.model.init();
     const currentPage = this.getCurrentPageFromHash();
     this.navigateToPage(currentPage);
   }
@@ -49,7 +49,8 @@ export class AppController {
         this.view.renderSettings();
         break;
       case "profil":
-        this.view.renderProfil();
+        const profilData = this.model.getChildData();
+        this.view.renderProfil(profilData);
         break;
       case "createAccount":
         this.view.renderCreateAccount();
