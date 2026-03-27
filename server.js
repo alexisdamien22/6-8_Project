@@ -1,36 +1,34 @@
-const express = require("express");
-const path = require("path");
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import authRoutes from "./src/routes/authRoutes.js";
+import childRoutes from "./src/routes/childRoutes.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/manifest.json", (req, res) => {
-  res.sendFile(path.join(__dirname, "manifest.json"));
-});
+app.use(express.json());
 
+app.use("/api/auth", authRoutes);
+app.use("/api/child", childRoutes);
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/src", express.static(path.join(__dirname, "src")));
+
+app.get("/manifest.json", (req, res) =>
+  res.sendFile(path.join(__dirname, "manifest.json")),
+);
 app.get("/sw.js", (req, res) => {
   res.setHeader("Content-Type", "application/javascript");
   res.sendFile(path.join(__dirname, "sw.js"));
 });
 
-app.use((req, res, next) => {
-  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.setHeader("Pragma", "no-cache");
-  res.setHeader("Expires", "0");
-  next();
-});
+app.get("*", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use("/src", express.static(path.join(__dirname, "src")));
-
-app.get("/api/status", (req, res) => {
-  res.json({ status: "ok", message: "Node.js backend fonctionnel" });
-});
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`),
+);

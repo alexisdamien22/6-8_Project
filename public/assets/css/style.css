@@ -24,6 +24,17 @@
   --color-bg-popup: #2a3139;
   --color-text-popup-title: #ffffff;
   --color-text-popup-desc: #b4b4b4;
+
+  --ca-purple: #7b2fbe;
+  --ca-purple-hover: #6a1fa8;
+  --ca-input-bg: #ebebeb;
+  --ca-placeholder: #aaaaaa;
+  --ca-text-sub: #999999;
+  --ca-text-main: #1a1a1a;
+  --ca-radius-btn: 14px;
+  --ca-input-bg: #2a3139; /* Fond sombre pour mode nuit */
+  --ca-input-text: #ffffff; /* Texte blanc pour mode nuit */
+  --ca-placeholder: #aaaaaa;
 }
 
 body.light-mode {
@@ -39,6 +50,8 @@ body.light-mode {
   --color-bg-popup: #ffffff;
   --color-text-popup-title: #3c3c3c;
   --color-text-popup-desc: #777777;
+  --ca-input-bg: #e1e8ed; /* Fond gris clair pour mode jour */
+  --ca-input-text: #20252b; /* Texte sombre pour mode jour */
 }
 
 body.light-mode #app {
@@ -736,4 +749,320 @@ input:checked + .slider:before {
   color: var(--color-text-popup-title);
   margin: 5px 0 5px 0;
   font-size: 16px;
+}
+
+.ca-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+  background: var(--color-bg-main) !important;
+  overflow: hidden;
+  animation: ca-fadeIn 0.28s ease;
+}
+
+@keyframes ca-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ca-top-bar {
+  padding: 15px 20px 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.ca-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #dedede;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-main, #555);
+}
+
+.ca-content {
+  flex: 1;
+  padding: 10px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.ca-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--color-text-main) !important;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.ca-step-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ca-text-sub);
+}
+
+.ca-illus-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.ca-illus-wrap img {
+  max-height: 100px;
+  width: auto;
+  display: block;
+}
+
+.ca-illus-name {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--ca-purple);
+}
+
+.ca-form-block {
+  margin-bottom: 15px;
+}
+
+.ca-question {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-text-main) !important;
+}
+
+.ca-hint {
+  font-size: 11px;
+  color: var(--ca-text-sub);
+}
+
+.ca-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--ca-input-bg);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ca-input-text) !important;
+  outline: none;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+
+.ca-input::placeholder {
+  color: var(--ca-placeholder);
+}
+
+.ca-input:focus {
+  border-color: var(--ca-purple);
+  background: var(--ca-input-bg);
+}
+
+.ca-instr-grid,
+.ca-mascot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.ca-instr-card {
+  background: var(--ca-input-bg);
+  border-radius: 12px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 85px;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ca-instr-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ca-instr-icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.ca-instr-lbl {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ca-placeholder);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.ca-instr-card.sel {
+  background: rgba(123, 47, 190, 0.15);
+  border-color: var(--ca-purple);
+}
+
+.ca-instr-card.sel .ca-instr-lbl {
+  color: var(--ca-purple);
+}
+
+.ca-mascot-cell {
+  background: var(--ca-input-bg);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.18s;
+}
+
+.ca-mascot-cell.sel {
+  background: rgba(123, 47, 190, 0.15);
+  border-color: var(--ca-purple);
+}
+
+.ca-days-row {
+  display: flex;
+  gap: 4px;
+}
+
+.ca-day-pill {
+  flex: 1;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--ca-input-bg);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ca-placeholder);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.ca-day-pill.sel {
+  background: var(--ca-purple);
+  color: white;
+}
+
+.ca-footer {
+  padding: 10px 25px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.ca-btn-next {
+  width: 100%;
+  padding: 16px;
+  background: var(--ca-purple);
+  color: white;
+  border: none;
+  border-radius: var(--ca-radius-btn);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ca-btn-next:disabled {
+  background: #dedede;
+  color: #aaaaaa;
+  cursor: not-allowed;
+}
+
+.ca-note-deco {
+  color: var(--ca-purple);
+  font-size: 18px;
+  opacity: 0.45;
+}
+
+.ca-login-hint {
+  font-size: 12px;
+  margin: 0;
+}
+
+.ca-success-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ca-success-mascot {
+  font-size: 60px;
+  margin-bottom: 10px;
+}
+
+.ca-success-title {
+  font-size: 24px;
+  margin-bottom: 5px;
+  color: var(--color-text-main) !important;
+}
+
+.ca-success-msg {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ca-text-sub);
+}
+.ca-instr-card,
+.ca-mascot-cell,
+.ca-day-pill {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.ca-loading-dots span {
+  animation: blink 1s infinite;
+}
+.ca-loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.ca-loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

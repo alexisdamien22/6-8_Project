@@ -1,318 +1,240 @@
-const ICONS = {
-  basson: "./assets/img/icons/basson.png",
-  guitare: "./assets/img/icons/guitar.png",
-  violon: "./assets/img/icons/violin.png",
-  flute: "./assets/img/icons/recorder.png",
-  batterie: "./assets/img/icons/drum.png",
-  trompette: "./assets/img/icons/trumpet.png",
-  corHarmonie: "./assets/img/icons/french-horn.png",
-  // basse: "./assets/img/icons/basse.png",
-};
-
-const INSTRUMENTS = [
-  { id: "basson", lbl: "Basson", png: ICONS.basson },
-  { id: "guitare", lbl: "Guitare", png: ICONS.guitare },
-  { id: "violon", lbl: "Violon", png: ICONS.violon },
-  { id: "flute", lbl: "Flûte", png: ICONS.flute },
-  { id: "batterie", lbl: "Batterie", png: ICONS.batterie },
-  { id: "trompette", lbl: "Trompette", png: ICONS.trompette },
-  { id: "corHarmonie", lbl: "Cor d'Harmonie", png: ICONS.corHarmonie },
-];
-
-const STEP_ILLUS = {
-  1: { png: ICONS.guitare, lbl: "Guitare" },
-  2: { png: ICONS.flute, lbl: "Flute" },
-  3: { png: ICONS.violon, lbl: "Violon" },
-  4: { png: ICONS.batterie, lbl: "Batteriee" },
-  5: { png: ICONS.corHarmonie, lbl: "Cor d'harmonie" },
-  6: { png: ICONS.trompette, lbl: "Trompette" },
-  7: { png: ICONS.flute, lbl: "Flûte traversière" },
-};
-
-const MASCOTTES = ["🦊", "🐸", "🐱", "🐶", "🦄", "🐼", "🐰", "🦋", "🐺"]; // Crop les images des mascottes
-const JOURS = ["L", "Ma", "Me", "J", "V", "S", "D"];
-const TOTAL = 7;
+import {
+  INSTRUMENTS,
+  STEP_ILLUS,
+  MASCOTTES,
+  JOURS,
+  TOTAL_STEPS,
+  ICONS,
+} from "../../constants/CreateAccountConstants.js";
+import { esc, isStepValid } from "../../utils/FormHelpers.js";
 
 let _step = 1;
+let _isLoginMode = true;
+let _isLoading = false;
+let _loginState = { email: "", password: "" };
 let _state = {
-  prenom: "",
+  name: "",
   age: "",
   instrument: "",
   duree: "",
   ecole: "",
   mascotte: "",
   jours: [],
+  email: "",
+  password: "",
 };
 
-function esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;");
-}
-
-function svgWithFill(svgStr) {
-  return svgStr.replace("<svg", `<svg fill="var(--ca-purple)"`);
-}
-
 function buildFormContent(step) {
+  if (_isLoginMode) {
+    return `
+    <p class="ca-question">Content de te revoir !</p>
+    <form id="ca-login-form" onsubmit="return false;">
+      <input class="ca-input" type="email" autocomplete="username" id="log-email" 
+        placeholder="Ton email" value="${esc(_loginState.email)}"
+        oninput="window.__log_input('email', this.value)">
+      <input class="ca-input" type="password" autocomplete="current-password" id="log-pass" 
+        placeholder="Ton mot de passe" value="${esc(_loginState.password)}"
+        oninput="window.__log_input('password', this.value)">
+    </form>
+    <a href="#" class="ca-forgot-pass">Mot de passe oublié ?</a>`;
+  }
   switch (step) {
     case 1:
       return `
-        <p class="ca-question">Quel est ton <em>prénom</em> ?</p>
-        <input class="ca-input" type="text" id="ca-f1"
-          placeholder="Prénom" value="${esc(_state.prenom)}"
-          oninput="window.__ca_input('prenom', this.value)">`;
-
+        <p class="ca-question">Infos du <em>parent</em> (pour le compte)</p>
+        <input class="ca-input" type="email" placeholder="Email du parent" value="${esc(_state.email)}" oninput="window.__ca_input('email', this.value)">
+        <input class="ca-input" type="password" placeholder="Mot de passe (8+ car.)" value="${esc(_state.password)}" oninput="window.__ca_input('password', this.value)">
+        <p class="ca-question" style="margin-top: 24px;">Quel est ton <em>prénom</em> ?</p>
+        <input class="ca-input" type="text" placeholder="Prénom de l'enfant" value="${esc(_state.name)}" oninput="window.__ca_input('name', this.value)">`;
     case 2:
-      return `
-        <p class="ca-question">Quel est ton <em>âge</em> ?</p>
-        <input class="ca-input" type="number" id="ca-f2"
-          placeholder="Âge" min="5" max="99" value="${esc(_state.age)}"
-          oninput="window.__ca_input('age', this.value)">`;
-
-    case 3: {
+      return `<p class="ca-question">Quel est ton <em>âge</em> ?</p>
+              <input class="ca-input" type="number" placeholder="Âge" value="${esc(_state.age)}" oninput="window.__ca_input('age', this.value)">`;
+    case 3:
       const cards = INSTRUMENTS.map(
         (ins) => `
-        <div class="ca-instr-card${_state.instrument === ins.id ? " sel" : ""}"
-          onclick="window.__ca_pick('instrument','${ins.id}')">
-          <div class="ca-instr-icon"><img src="${ins.png}" alt="${ins.lbl}" /></div>
+        <div class="ca-instr-card${_state.instrument === ins.id ? " sel" : ""}" onclick="window.__ca_pick('instrument','${ins.id}', event)">
+          <div class="ca-instr-icon"><img src="${ins.png}" /></div>
           <span class="ca-instr-lbl">${ins.lbl}</span>
         </div>`,
       ).join("");
-      return `
-        <p class="ca-question" style="margin-bottom:12px">Quel <em>instrument</em> pratiques-tu ?</p>
-        <div class="ca-instr-grid">${cards}</div>`;
-    }
-
+      return `<p class="ca-question">Quel <em>instrument</em> ?</p><div class="ca-instr-grid">${cards}</div>`;
     case 4:
-      return `
-        <p class="ca-question">
-          Depuis <em>combien de temps</em> tu pratiques cet instrument ?
-          <small class="ca-hint">(N'oublies pas de préciser si c'est en mois ou en années)</small>
-        </p>
-        <input class="ca-input" type="text" id="ca-f4"
-          placeholder="Durée" value="${esc(_state.duree)}"
-          oninput="window.__ca_input('duree', this.value)">`;
-
+      return `<p class="ca-question">Depuis <em>combien d'années</em> pratiques-tu ?</p>
+              <input class="ca-input" type="number" value="${esc(_state.duree)}" oninput="window.__ca_input('duree', this.value)">`;
     case 5:
-      return `
-        <p class="ca-question">Tu es dans quelle <em>école</em> ou <em>conservatoire</em> ?</p>
-        <input class="ca-input" type="text" id="ca-f5"
-          placeholder="École" value="${esc(_state.ecole)}"
-          oninput="window.__ca_input('ecole', this.value)">`;
-
-    case 6: {
+      return `<p class="ca-question">Ton <em>école</em> ou conservatoire ?</p>
+              <input class="ca-input" type="text" value="${esc(_state.ecole)}" oninput="window.__ca_input('ecole', this.value)">`;
+    case 6:
       const cells = MASCOTTES.map(
         (m) => `
-        <div class="ca-mascot-cell${_state.mascotte === m ? " sel" : ""}"
-          onclick="window.__ca_pick('mascotte','${m}')">${m}</div>`,
+        <div class="ca-mascot-cell${_state.mascotte === m ? " sel" : ""}" onclick="window.__ca_pick('mascotte','${m}', event)">${m}</div>`,
       ).join("");
-      return `
-        <p class="ca-question" style="margin-bottom:12px">Choisis une <em>mascotte</em> !</p>
-        <div class="ca-mascot-grid">${cells}</div>`;
-    }
-
-    case 7: {
+      return `<p class="ca-question">Choisis une <em>mascotte</em> !</p><div class="ca-mascot-grid">${cells}</div>`;
+    case 7:
       const pills = JOURS.map(
         (j) => `
-        <button class="ca-day-pill${_state.jours.includes(j) ? " sel" : ""}"
-          onclick="window.__ca_toggleDay('${j}')">${j}</button>`,
+        <button class="ca-day-pill${_state.jours.includes(j) ? " sel" : ""}" onclick="window.__ca_toggleDay('${j}')">${j}</button>`,
       ).join("");
-      return `
-        <p class="ca-question" style="margin-bottom:14px">Quels jours veux-tu <em>travailler</em> ?</p>
-        <div class="ca-days-row">${pills}</div>`;
-    }
-
+      return `<p class="ca-question">Quels jours vas-tu <em>travailler</em> ?</p><div class="ca-days-row">${pills}</div>`;
     default:
       return "";
   }
 }
 
-function isStepValid(step) {
-  switch (step) {
-    case 1:
-      return _state.prenom.trim() !== "";
-    case 2:
-      return _state.age !== "";
-    case 3:
-      return _state.instrument !== "";
-    case 4:
-      return _state.duree.trim() !== "";
-    case 5:
-      return _state.ecole.trim() !== "";
-    case 6:
-      return _state.mascotte !== "";
-    case 7:
-      return _state.jours.length > 0;
-    default:
-      return false;
-  }
-}
-
 export const CreateAccountPage = {
-  reset() {
-    _step = 1;
-    _state = {
-      prenom: "",
-      age: "",
-      instrument: "",
-      duree: "",
-      ecole: "",
-      mascotte: "",
-      jours: [],
-    };
-  },
-
   getHTML() {
-    if (_step === 8) {
-      const instrLbl =
-        INSTRUMENTS.find((i) => i.id === _state.instrument)?.lbl ??
-        "ton instrument";
-      return `
-        <div class="ca-screen ca-success">
+    if (!_isLoginMode && _step === 8) {
+      return `<div class="ca-screen ca-success">
           <div class="ca-success-body">
             <div class="ca-success-mascot">${_state.mascotte || "🎵"}</div>
-            <h2 class="ca-success-title">Bienvenue, ${esc(_state.prenom)} !</h2>
-            <p class="ca-success-msg">
-              Ton compte est prêt.<br>
-              Lance-toi et pratique <strong>${esc(instrLbl)}</strong> chaque jour !
-            </p>
+            <h2 class="ca-success-title">Bienvenue, ${esc(_state.name)} !</h2>
           </div>
-          <div class="ca-footer">
-            <button class="ca-btn-next" id="ca-btn-start">Commencer l'aventure 🚀</button>
-          </div>
+          <div class="ca-footer"><button class="ca-btn-next" id="ca-btn-start">Commencer l'aventure 🚀</button></div>
         </div>`;
     }
 
-    const illus = STEP_ILLUS[_step];
-    const valid = isStepValid(_step);
-    const backBtn =
-      _step > 1
-        ? `<button class="ca-back-btn" id="ca-back">&#8592;</button>`
-        : "";
+    const title = _isLoginMode ? "Connexion" : "Création de compte";
+    const subTitle = _isLoginMode
+      ? "Connecte-toi pour continuer"
+      : `${_step}/${TOTAL_STEPS}`;
+    let btnLabel = _isLoginMode
+      ? "Se connecter"
+      : _step === TOTAL_STEPS
+        ? "Terminé !"
+        : "Suivant";
+    if (_isLoading) btnLabel = `<span class="ca-spinner"></span>`;
+
+    const illus = _isLoginMode
+      ? { png: ICONS.guitare, lbl: "Prêt ?" }
+      : STEP_ILLUS[_step];
+    const valid = isStepValid(
+      _step,
+      _isLoginMode,
+      _isLoading,
+      _state,
+      _loginState,
+    );
 
     return `
       <div class="ca-screen">
-
-        <!-- Barre du haut -->
-        <div class="ca-top-bar">${backBtn}</div>
-
-        <!-- Contenu scrollable -->
         <div class="ca-content">
-          <h1 class="ca-title">Création de compte</h1>
-          <p class="ca-step-label">${_step}/${TOTAL}</p>
-
-          <!-- Illustration décorative -->
-          <div class="ca-illus-wrap">
-            <img src="${illus.png}" alt="${illus.lbl}" />
-            <span class="ca-illus-name">${illus.lbl}</span>
-          </div>
-
-          <!-- Champ / sélecteur propre à l'étape -->
-          <div class="ca-form-block">
-            ${buildFormContent(_step)}
-          </div>
+          <h1 class="ca-title">${title}</h1>
+          <p class="ca-step-label">${subTitle}</p>
+          <div class="ca-illus-wrap"><img src="${illus.png}" /> <span class="ca-illus-name">${illus.lbl}</span></div>
+          <div class="ca-form-block">${buildFormContent(_step)}</div>
+          <button class="ca-btn-next" id="ca-main-btn" ${valid ? "" : "disabled"}>${btnLabel}</button>
         </div>
-
-        <!-- Pied de page fixe -->
         <div class="ca-footer">
-          <button class="ca-btn-next" id="ca-btn-next" ${valid ? "" : "disabled"}>
-            ${_step === TOTAL ? "Terminé !" : "Suivant"}
-          </button>
-          <span class="ca-note-deco">♩</span>
-          ${
-            _step === 1
-              ? `<p class="ca-login-hint">
-                Tu as déjà un compte ? <a href="#login" class="ca-login-link">Connecte-toi !</a>
-               </p>`
-              : ""
-          }
+          <p class="ca-login-hint">${_isLoginMode ? 'Nouveau ici ? <a href="#" id="ca-switch-mode">Crée un compte !</a>' : 'Déjà inscrit ? <a href="#" id="ca-switch-mode">Connecte-toi !</a>'}</p>
         </div>
-
       </div>`;
   },
 
   afterRender() {
-    const btnNext = document.getElementById("ca-btn-next");
-    const btnBack = document.getElementById("ca-back");
-    const btnStart = document.getElementById("ca-btn-start");
+    document
+      .getElementById("ca-switch-mode")
+      ?.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (_isLoading) return;
+        _isLoginMode = !_isLoginMode;
+        _step = 1;
+        window.appController?.navigateToPage("createAccount");
+      });
 
-    // --- BOUTON SUIVANT / TERMINÉ ---
-    btnNext?.addEventListener("click", async () => {
-      if (!isStepValid(_step)) return;
+    document
+      .getElementById("ca-main-btn")
+      ?.addEventListener("click", async () => {
+        if (
+          !isStepValid(_step, _isLoginMode, _isLoading, _state, _loginState) ||
+          _isLoading
+        )
+          return;
 
-      // Si on est à la dernière étape (7), on enregistre en BDD
-      if (_step === TOTAL) {
-        btnNext.disabled = true;
-        btnNext.textContent = "Chargement...";
+        if (_isLoginMode || _step === TOTAL_STEPS) {
+          _isLoading = true;
+          this.updateBtnLoading(true);
 
-        try {
-          const response = await fetch("/api/signup/child", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(_state),
-          });
+          try {
+            const url = _isLoginMode ? "/api/auth/login" : "/api/auth/register";
+            const body = _isLoginMode ? _loginState : _state;
+            const response = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            });
+            const res = await response.json();
 
-          const result = await response.json();
-
-          if (result.success) {
-            // On sauvegarde l'ID de l'enfant pour créer le compte adulte après
-            localStorage.setItem("currentChildId", result.childId);
-            _step = 8; // Passage à l'écran de succès
-            window.appController?.navigateToPage("createAccount");
-          } else {
-            alert("Erreur: " + result.error);
-            btnNext.disabled = false;
-            btnNext.textContent = "Terminé !";
+            if (res.success) {
+              localStorage.setItem("jwt_token", res.token);
+              localStorage.setItem("activeChildId", res.childId);
+              window.appController?.model.login();
+              if (!_isLoginMode) {
+                _step = 8;
+                _isLoading = false;
+                window.appController?.navigateToPage("createAccount");
+              } else {
+                _isLoading = false;
+                window.appController?.navigateToPage("home");
+              }
+            } else {
+              _isLoading = false;
+              alert(res.error || "Erreur");
+              window.appController?.navigateToPage("createAccount");
+            }
+          } catch (err) {
+            _isLoading = false;
+            alert("Erreur réseau");
           }
-        } catch (err) {
-          console.error("Erreur réseau:", err);
-          alert("Impossible de joindre le serveur.");
-          btnNext.disabled = false;
+        } else {
+          _step++;
+          window.appController?.navigateToPage("createAccount");
         }
-      } else {
-        // Sinon, on avance simplement d'une étape
-        _step++;
-        window.appController?.navigateToPage("createAccount");
-      }
-    });
+      });
 
-    // --- BOUTON RETOUR ---
-    btnBack?.addEventListener("click", () => {
-      if (_step > 1) {
-        _step--;
-        window.appController?.navigateToPage("createAccount");
-      }
-    });
-
-    document.getElementById("ca-btn-start")?.addEventListener("click", () => {
-      window.appController?.model.login(); // Enregistre la connexion
-      window.appController?.navigateToPage("home");
-    });
-
-    btnStart?.addEventListener("click", () => {
-      // C'est ici qu'on redirige vers la création du compte ADULTE
-      window.appController?.navigateToPage("createAdultAccount");
-    });
-    // --- FONCTIONS GLOBALES (Window) ---
-    // On les définit une seule fois proprement
-    window.__ca_input = (key, value) => {
-      _state[key] = value;
-      if (btnNext) btnNext.disabled = !isStepValid(_step);
+    // Global listeners for inputs
+    window.__log_input = (k, v) => {
+      _loginState[k] = v;
+      this.refreshBtn();
     };
-
-    window.__ca_pick = (key, value) => {
-      _state[key] = value;
-      // Pour les sélections (instruments/mascottes), on rafraîchit la page pour montrer le "sel" (sélectionné)
-      window.appController?.navigateToPage("createAccount");
+    window.__ca_input = (k, v) => {
+      _state[k] = v;
+      this.refreshBtn();
     };
-
-    window.__ca_toggleDay = (jour) => {
-      const idx = _state.jours.indexOf(jour);
-      if (idx === -1) _state.jours.push(jour);
+    window.__ca_pick = (k, v, e) => {
+      _state[k] = v;
+      document
+        .querySelectorAll(
+          k === "instrument" ? ".ca-instr-card" : ".ca-mascot-cell",
+        )
+        .forEach((c) => c.classList.remove("sel"));
+      e.currentTarget.classList.add("sel");
+      this.refreshBtn();
+    };
+    window.__ca_toggleDay = (j) => {
+      const idx = _state.jours.indexOf(j);
+      if (idx === -1) _state.jours.push(j);
       else _state.jours.splice(idx, 1);
-      window.appController?.navigateToPage("createAccount");
+      document.querySelector(".ca-form-block").innerHTML =
+        buildFormContent(_step);
+      this.refreshBtn();
     };
+  },
+
+  refreshBtn() {
+    const btn = document.getElementById("ca-main-btn");
+    if (btn)
+      btn.disabled = !isStepValid(
+        _step,
+        _isLoginMode,
+        _isLoading,
+        _state,
+        _loginState,
+      );
+  },
+
+  updateBtnLoading(loading) {
+    const btn = document.getElementById("ca-main-btn");
+    if (btn && loading)
+      btn.innerHTML = `<span class="ca-loading-dots">Chargement<span>.</span><span>.</span><span>.</span></span>`;
   },
 };
