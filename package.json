@@ -1,7 +1,7 @@
 {
   "name": "six-huit-mvc",
   "version": "1.0.0",
-  "description": "Application de musique Six-Huit migrée vers Node.js",
+  "description": "Application de musique Six-Huit",
   "main": "server.js",
   "type": "module",
   "scripts": {
