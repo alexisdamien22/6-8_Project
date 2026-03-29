@@ -125,7 +125,6 @@ export class AppView {
     this.renderPageTitle("Musique");
   }
 
-  // --- Les fonctions sont maintenant 100% propres et appellent les bons fichiers ---
   renderSettings() {
     this.app.innerHTML = SettingsPage.getHTML();
   }
