@@ -49,6 +49,7 @@ router.post("/register", async (req, res) => {
 
     return res.status(201).json({ success: true, token, childId });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ success: false, error: "Erreur interne du serveur." });
@@ -80,6 +81,7 @@ router.post("/login", async (req, res) => {
 
     return res.status(200).json({ success: true, token, childId });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ success: false, error: "Erreur interne du serveur." });

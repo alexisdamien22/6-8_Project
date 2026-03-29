@@ -221,7 +221,6 @@ export const CreateAccountPage = {
           ? "/api/auth/login"
           : "/api/auth/register";
         const body = state.isLoginMode ? state.loginData : state.registerData;
-
         const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

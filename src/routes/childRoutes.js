@@ -14,6 +14,7 @@ router.get("/:id/streak", async (req, res) => {
       streak: streakData ? streakData.current_streak : 0,
     });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ success: false, error: "Erreur interne du serveur." });
@@ -26,6 +27,7 @@ router.post("/:id/streak", async (req, res) => {
     await StreaksManager.update(req.params.id, streak, lastDate);
     return res.status(200).json({ success: true });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ success: false, error: "Erreur interne du serveur." });
@@ -51,6 +53,7 @@ router.get("/:id/full-data", async (req, res) => {
       data: { ...childData, plan: planRows, streak },
     });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ success: false, error: "Erreur interne du serveur." });
@@ -65,6 +68,7 @@ router.post("/:id/sessions", async (req, res) => {
 
     return res.status(201).json({ success: true, session: newSession });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ success: false, error: "Erreur interne du serveur." });

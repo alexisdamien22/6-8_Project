@@ -7,3 +7,9 @@ export const db = mysql.createPool({
   database: process.env.DB_NAME || "six_huit_production",
   connectionLimit: 10,
 });
+
+db.getConnection()
+  .then(() => console.log("✅ Connexion à la base de données réussie"))
+  .catch((err) =>
+    console.error("❌ ÉCHEC de connexion à la base de données:", err.message),
+  );
