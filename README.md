@@ -31,9 +31,17 @@ Avant de lancer le projet, assurez-vous d'avoir installé :
 
 **1. Cloner le projet et installer les dépendances**
 \`\`\`bash
-git clone <[url-de-repo](https://github.com/alexisdamien22/6-8_Project.git)>
+git clone <[repo-github](https://github.com/alexisdamien22/6-8_Project.git)>
 cd 6-8_Project-betterConnection
 npm install
+
+# Installation des dépendances de production
+
+npm install express mysql2 dotenv bcryptjs jsonwebtoken
+
+# Installation de la dépendance de développement
+
+npm install --save-dev nodemon
 \`\`\`
 
 **2. Configurer la base de données**

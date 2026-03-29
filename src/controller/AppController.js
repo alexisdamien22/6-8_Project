@@ -34,7 +34,13 @@ export class AppController {
 
     switch (pageName) {
       case "home":
-        this.view.renderHome(this.model.getChildData());
+        if (!localStorage.getItem("activeChildId")) {
+          this.view.renderParentHome(
+            this.model.getParentData ? this.model.getParentData() : null,
+          );
+        } else {
+          this.view.renderHome(this.model.getChildData());
+        }
         break;
       case "podium":
         this.view.renderPodium();

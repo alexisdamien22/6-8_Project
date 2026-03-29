@@ -30,7 +30,7 @@ function buildFormContent() {
   if (state.isLoginMode) {
     return `
       <p class="ca-question">Content de te revoir !</p>
-      <form id="ca-login-form" onsubmit="return false;">
+      <form id="ca-login-form">
         <input class="ca-input login-input" type="email" autocomplete="username" data-field="email" 
           placeholder="Ton email" value="${esc(state.loginData.email)}">
         <input class="ca-input login-input" type="password" autocomplete="current-password" data-field="password" 
@@ -144,6 +144,11 @@ export const CreateAccountPage = {
   },
 
   attachEventListeners() {
+    const loginForm = document.getElementById("ca-login-form");
+    if (loginForm) {
+      loginForm.addEventListener("submit", (e) => e.preventDefault());
+    }
+
     const switchModeBtn = document.getElementById("ca-switch-mode");
     if (switchModeBtn) {
       switchModeBtn.addEventListener("click", (e) => {
@@ -231,15 +236,16 @@ export const CreateAccountPage = {
 
         if (res.success) {
           localStorage.setItem("jwt_token", res.token);
-          localStorage.setItem("activeChildId", res.childId);
           window.appController?.model.login();
 
           if (!state.isLoginMode) {
+            localStorage.setItem("activeChildId", res.childId);
             state.step = 8;
             state.isLoading = false;
             window.appController?.navigateToPage("createAccount");
           } else {
             state.isLoading = false;
+            localStorage.removeItem("activeChildId");
             window.appController?.navigateToPage("home");
           }
         } else {

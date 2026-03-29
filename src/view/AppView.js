@@ -7,7 +7,9 @@ import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
 import { CreateAccountPage } from "./pages/CreateAccountPage.js";
+import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { AppFireChange } from "./AppFireChange.js";
+import { setSecureHTML } from "../utils/SecurityHelpers.js";
 
 export class AppView {
   constructor() {
@@ -89,8 +91,19 @@ export class AppView {
     if (header) header.style.display = "";
 
     this.updateHeaderStreak();
-    this.app.innerHTML = HomePage.getHTML(data);
+    setSecureHTML(this.app, HomePage.getHTML(data));
     HomePage.afterRender();
+  }
+
+  renderParentHome(data) {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
+
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+
+    setSecureHTML(this.app, ParentHomePage.getHTML(data));
+    ParentHomePage.afterRender();
   }
 
   updateHeaderStreak(value = null) {
@@ -114,7 +127,7 @@ export class AppView {
   }
 
   renderPageTitle(titleText) {
-    this.app.innerHTML = `<h1>${titleText}</h1>`;
+    setSecureHTML(this.app, `<h1>${titleText}</h1>`);
   }
 
   renderPodium() {
@@ -126,11 +139,11 @@ export class AppView {
   }
 
   renderSettings() {
-    this.app.innerHTML = SettingsPage.getHTML();
+    setSecureHTML(this.app, SettingsPage.getHTML());
   }
 
   renderProfil(data) {
-    this.app.innerHTML = ProfilPage.getHTML(data);
+    setSecureHTML(this.app, ProfilPage.getHTML(data));
   }
 
   renderCreateAccount() {
@@ -140,7 +153,7 @@ export class AppView {
     const header = document.querySelector("header, .main-header");
     if (header) header.style.display = "none";
 
-    this.app.innerHTML = CreateAccountPage.getHTML();
+    setSecureHTML(this.app, CreateAccountPage.getHTML());
     CreateAccountPage.afterRender();
   }
 }

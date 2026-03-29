@@ -1,5 +1,5 @@
 {
-  "name": "six-huit-mvc",
+  "name": "six-huit",
   "version": "1.0.0",
   "description": "Application de musique Six-Huit",
   "main": "server.js",

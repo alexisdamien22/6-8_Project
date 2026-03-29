@@ -3,7 +3,6 @@ import { esc } from "../../utils/FormHelpers.js";
 
 export const ProfilPage = {
   getHTML: (data) => {
-    // Nettoyage de sécurité sur les données entrées par l'utilisateur
     const mascot = esc(data?.mascotte) || "👤";
     const name = esc(data?.name) || "Profil";
     const rawInstrument = esc(data?.instrument);
@@ -11,7 +10,6 @@ export const ProfilPage = {
       ? rawInstrument.charAt(0).toUpperCase() + rawInstrument.slice(1)
       : "-";
 
-    // Récupération de la série
     const currentStreak = parseInt(
       data?.streakData?.current_streak || localStorage.getItem("streak") || "0",
       10,
