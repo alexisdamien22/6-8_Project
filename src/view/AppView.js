@@ -3,10 +3,13 @@ import { PodiumPage } from "./pages/PodiumPage.js";
 import { MusicPage } from "./pages/MusicPage.js";
 import { ProfilPage } from "./pages/ProfilPage.js";
 import { SettingsPage } from "./pages/SettingsPage.js";
+import { RegisterParentPage } from "./pages/RegisterParentPage.js";
+import { RegisterChildPage } from "./pages/RegisterChildPage.js";
+import { LoginPage } from "./pages/LoginPage.js";
 import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
-import { CreateAccountPage } from "./pages/CreateAccountPage.js";
+
 import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { AppFireChange } from "./AppFireChange.js";
 import { setSecureHTML } from "../utils/SecurityHelpers.js";
@@ -145,7 +148,34 @@ export class AppView {
   renderProfil(data) {
     setSecureHTML(this.app, ProfilPage.getHTML(data));
   }
+  renderRegisterParent() {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
 
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+    setSecureHTML(this.app, RegisterParentPage.getHTML());
+    RegisterParentPage.attachEventListeners();
+  }
+  renderRegisterChild() {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
+
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+    setSecureHTML(this.app, RegisterChildPage.getHTML());
+    RegisterChildPage.attachEventListeners();
+  }
+  renderLogin() {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
+
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+    setSecureHTML(this.app, LoginPage.getHTML());
+    LoginPage.attachEventListeners();
+  }
+  /*
   renderCreateAccount() {
     const footer = document.querySelector(".main-footer");
     if (footer) footer.style.display = "none";
@@ -156,4 +186,5 @@ export class AppView {
     setSecureHTML(this.app, CreateAccountPage.getHTML());
     CreateAccountPage.afterRender();
   }
+    */
 }

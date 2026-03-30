@@ -19,9 +19,9 @@ export function isStepValid(step, isLoginMode, isLoading, state, loginState) {
   switch (step) {
     case 1:
       return Boolean(
-        state.name?.trim().length >= 2 &&
         state.email?.includes("@") &&
-        state.password?.length >= 8,
+        state.password?.length >= 8 &&
+        state.password === state.confirmPassword,
       );
     case 2: {
       const age = parseInt(state.age, 10);
@@ -30,9 +30,9 @@ export function isStepValid(step, isLoginMode, isLoading, state, loginState) {
     case 3:
       return Boolean(state.instrument);
     case 4: {
-      const duree = parseInt(state.duree, 10);
+      const duration = parseInt(state.duree, 10);
       const age = parseInt(state.age, 10);
-      return !isNaN(duree) && duree >= 0 && duree <= age;
+      return !isNaN(duration) && duration >= 0 && duration <= age;
     }
     case 5:
       return Boolean(state.ecole?.trim().length > 0);
