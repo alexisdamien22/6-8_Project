@@ -9,6 +9,7 @@ import { LoginPage } from "./pages/LoginPage.js";
 import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
+import { AccountSwitcher } from "./AccountSwitcher.js";
 
 import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { AppFireChange } from "./AppFireChange.js";
@@ -83,6 +84,24 @@ export class AppView {
       this.syncFooter(
         pages.indexOf(hash === "settings" || hash === "profil" ? "menu" : hash),
       );
+    }
+  }
+  toggleAccountSwitcher(show) {
+    const switcher = document.getElementById("account-switcher-container");
+    if (!switcher) {
+      // Si le menu n'existe pas encore dans le DOM, on le crée
+      // Supposons que tu as récupéré la liste des enfants dans ton model
+      const children = this.model.getChildren();
+      AccountSwitcher.create(this, children);
+      return this.toggleAccountSwitcher(true); // On relance une fois créé
+    }
+
+    if (show) {
+      switcher.classList.add("show");
+      document.body.style.overflow = "hidden"; // Empêche le scroll derrière
+    } else {
+      switcher.classList.remove("show");
+      document.body.style.overflow = "";
     }
   }
 
