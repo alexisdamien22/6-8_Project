@@ -32,12 +32,15 @@ export class AppModel {
       const response = await fetch("/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const result = await response.json();
-      if (result.success) {
-        this.parentData = result.data;
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `Erreur HTTP ${response.status}`);
       }
+      this.parentData = result.user;
     } catch (e) {
-      console.error(e);
+      console.error("Échec de la récupération des données parent:", e.message);
     }
   }
 

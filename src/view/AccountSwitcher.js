@@ -1,16 +1,9 @@
 import { esc } from "../utils/FormHelpers.js";
 
 export const AccountSwitcher = {
-  /**
-   * Crée et injecte le menu de switch de compte dans le DOM
-   * @param {Object} view - L'instance de la vue pour gérer les toggles
-   * @param {Array} accounts - Liste des enfants [{id, name, mascotte}, ...]
-   */
   create(view, accounts = []) {
-    // Évite les doublons
     if (document.getElementById("account-switcher-container")) return;
 
-    // Génération de la liste des profils enfants
     const accountsHTML = accounts
       .map(
         (acc) => `
@@ -59,33 +52,29 @@ export const AccountSwitcher = {
     const container = document.getElementById("account-switcher-container");
     if (!container) return;
 
-    // Fermeture via l'overlay
     container
       .querySelector(".account-switcher-overlay")
       .addEventListener("click", () => {
         view.toggleAccountSwitcher(false);
       });
 
-    // Clic sur un profil enfant
     container.querySelectorAll(".switcher-item[data-id]").forEach((item) => {
       item.addEventListener("click", (e) => {
         const id = e.currentTarget.dataset.id;
-        localStorage.setItem("activeChildId", id); // On définit l'enfant actif
+        localStorage.setItem("activeChildId", id);
         view.toggleAccountSwitcher(false);
         window.appController?.navigateToPage("home");
       });
     });
 
-    // Retour à l'Espace Parent
     container
       .querySelector("#btn-switch-parent")
       ?.addEventListener("click", () => {
-        localStorage.removeItem("activeChildId"); // On retire l'enfant actif pour repasser en mode parent
+        localStorage.removeItem("activeChildId");
         view.toggleAccountSwitcher(false);
         window.appController?.navigateToPage("home");
       });
 
-    // Navigation vers la création d'enfant
     container
       .querySelector("#btn-switch-add")
       ?.addEventListener("click", () => {

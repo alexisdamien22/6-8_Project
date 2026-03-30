@@ -163,14 +163,12 @@ export const RegisterChildPage = {
     state.isLoading = true;
     window.appController?.navigateToPage("registerChild");
 
-    // On récupère l'ID du parent depuis le model
     const parentData = window.appController?.model.getParentData();
-    const parentId = parentData?.id;
+    const userId = parentData?.id;
 
-    // On prépare les données finales avec l'ID du parent
     const finalData = {
       ...state.registerData,
-      parentId: parentId, // On ajoute l'ID ici
+      userId: userId,
     };
 
     try {

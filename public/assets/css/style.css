@@ -983,7 +983,6 @@ input:checked + .slider:before {
   }
 }
 
-/* Account Switcher - Style */
 .account-switcher-container {
   position: fixed;
   inset: 0;
@@ -991,7 +990,7 @@ input:checked + .slider:before {
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* S'ouvre depuis le haut */
+  justify-content: flex-start;
 }
 
 .account-switcher-overlay {
@@ -1008,14 +1007,13 @@ input:checked + .slider:before {
   background-color: var(--color-bg-footer);
   width: 100%;
   padding: 20px;
-  transform: translateY(-100%); /* Caché en haut */
+  transform: translateY(-100%);
   transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: auto;
   border-bottom: 2px solid var(--ca-purple);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Affichage */
 .account-switcher-container.show {
   pointer-events: auto;
 }
@@ -1027,7 +1025,6 @@ input:checked + .slider:before {
   transform: translateY(0);
 }
 
-/* Items du menu */
 .switcher-item {
   display: flex;
   align-items: center;

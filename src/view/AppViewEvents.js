@@ -1,23 +1,19 @@
 import { AppViewTheme } from "./AppViewTheme.js";
 
 export function initAppEvents(view) {
-  // Gestion du thème
   document.addEventListener("change", (e) => {
     if (e.target.id === "theme-checkbox") {
       AppViewTheme.toggle(e.target.checked);
     }
   });
 
-  // Unique écouteur de clic global
   document.addEventListener("click", (e) => {
-    // 1. GESTION DU SWITCHER DE COMPTE (L'icône de profil dans le header)
     const headerProfile = e.target.closest(".profile-icon");
     if (headerProfile) {
       view.toggleAccountSwitcher(true);
       return;
     }
 
-    // Fermeture du switcher si on clique en dehors
     const switcher = document.getElementById("account-switcher-container");
     if (switcher?.classList.contains("show")) {
       if (!e.target.closest(".account-switcher-sheet") && !headerProfile) {
@@ -25,7 +21,6 @@ export function initAppEvents(view) {
       }
     }
 
-    // 2. GESTION DU BOTTOM MENU (Menu du bas)
     const bottomMenu = document.getElementById("bottom-menu-container");
     if (bottomMenu?.classList.contains("show")) {
       const clickedIcon = e.target.closest(".icon-footer");
@@ -36,7 +31,6 @@ export function initAppEvents(view) {
       }
     }
 
-    // 3. BOUTON PARAMÈTRES (Rotation + Navigation)
     const paramBtn = e.target.closest(".parametre");
     if (paramBtn) {
       const rot = parseInt(paramBtn.dataset.rotation || "0", 10) + 360;
@@ -46,13 +40,11 @@ export function initAppEvents(view) {
       view.syncFooter(3);
     }
 
-    // Validation séance
     if (e.target.closest("#btn-valider-seance")) {
       window.appController?.handleSessionValidation();
     }
   });
 
-  // Événements sur le container APP (Chemin, Popups, Boutons)
   view.app.addEventListener("click", (e) => {
     const startBtn = e.target.closest(".start-btn");
     if (startBtn && !startBtn.disabled) {
@@ -89,7 +81,6 @@ export function initAppEvents(view) {
     }
   });
 
-  // Gestion du "Pressed" sur les boutons du chemin (Pointer events)
   view.app.addEventListener("pointerdown", (e) => {
     const btn = e.target.closest(".path-button-container");
     if (btn && !e.target.closest(".duo-popup")) {

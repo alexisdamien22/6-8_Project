@@ -93,7 +93,6 @@ export class AppView {
     if (!switcher && show) {
       const children = this.model?.getChildren ? this.model.getChildren() : [];
       AccountSwitcher.create(this, children);
-      // On récupère l'élément juste après la création
       switcher = document.getElementById("account-switcher-container");
     }
 

@@ -22,4 +22,12 @@ export class UserManager {
   static async verifyPassword(password, hashedPassword) {
     return await bcrypt.compare(password, hashedPassword);
   }
+
+  static async getById(id) {
+    const [rows] = await db.query(
+      "SELECT id, username FROM adultaccount WHERE id = ?",
+      [id],
+    );
+    return rows[0] || null;
+  }
 }

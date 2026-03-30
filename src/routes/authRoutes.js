@@ -4,6 +4,7 @@ import { UserManager } from "../managers/UserManager.js";
 import { ChildAccountManager } from "../managers/ChildAccountManager.js";
 import { WeeklyPlanManager } from "../managers/WeeklyPlanManager.js";
 import { StreaksManager } from "../managers/StreaksManager.js";
+import { verifyToken } from "../model/authMiddleware.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_key_fallback";
@@ -58,9 +59,23 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/register-child", async (req, res) => {
+router.post("/register-child", verifyToken, async (req, res) => {
   try {
-    const { userId, jours, ...childInfo } = req.body;
+    const userId = req.user.userId;
+    const { jours, ...childInfo } = req.body;
+    console.log(
+      "Tentative de création d'enfant pour l'ID parent (depuis le token) :",
+      userId,
+    );
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error:
+          "ID du parent manquant dans le token. Impossible de créer l'enfant.",
+      });
+    }
+
     const childId = await ChildAccountManager.create(childInfo, userId);
 
     if (Array.isArray(jours)) {
@@ -115,22 +130,29 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/me", async (req, res) => {
+router.get("/me", verifyToken, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
-    const user = await db.User.findById(userId).populate("children");
+    const user = await UserManager.getById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Utilisateur non trouvé." });
+    }
+
+    const children = await ChildAccountManager.getChildrenOfAdult(userId);
 
     res.json({
       success: true,
-      data: {
+      user: {
         id: user.id,
-        name: user.name,
-        email: user.email,
-        children: user.children || [],
+        email: user.username,
+        children: children || [],
       },
     });
   } catch (error) {
+    console.error("Erreur dans GET /me :", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
