@@ -16,8 +16,9 @@ import { AppFireChange } from "./AppFireChange.js";
 import { setSecureHTML } from "../utils/SecurityHelpers.js";
 
 export class AppView {
-  constructor() {
+  constructor(model) {
     this.app = document.getElementById("app");
+    this.model = model;
     AppViewTheme.init();
     initAppEvents(this);
     this.setupFooterNavigation();
@@ -87,21 +88,23 @@ export class AppView {
     }
   }
   toggleAccountSwitcher(show) {
-    const switcher = document.getElementById("account-switcher-container");
-    if (!switcher) {
-      // Si le menu n'existe pas encore dans le DOM, on le crée
-      // Supposons que tu as récupéré la liste des enfants dans ton model
-      const children = this.model.getChildren();
+    let switcher = document.getElementById("account-switcher-container");
+
+    if (!switcher && show) {
+      const children = this.model?.getChildren ? this.model.getChildren() : [];
       AccountSwitcher.create(this, children);
-      return this.toggleAccountSwitcher(true); // On relance une fois créé
+      // On récupère l'élément juste après la création
+      switcher = document.getElementById("account-switcher-container");
     }
 
-    if (show) {
-      switcher.classList.add("show");
-      document.body.style.overflow = "hidden"; // Empêche le scroll derrière
-    } else {
-      switcher.classList.remove("show");
-      document.body.style.overflow = "";
+    if (switcher) {
+      if (show) {
+        switcher.classList.add("show");
+        document.body.style.overflow = "hidden";
+      } else {
+        switcher.classList.remove("show");
+        document.body.style.overflow = "";
+      }
     }
   }
 

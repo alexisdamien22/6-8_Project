@@ -163,6 +163,16 @@ export const RegisterChildPage = {
     state.isLoading = true;
     window.appController?.navigateToPage("registerChild");
 
+    // On récupère l'ID du parent depuis le model
+    const parentData = window.appController?.model.getParentData();
+    const parentId = parentData?.id;
+
+    // On prépare les données finales avec l'ID du parent
+    const finalData = {
+      ...state.registerData,
+      parentId: parentId, // On ajoute l'ID ici
+    };
+
     try {
       const response = await fetch("/api/auth/register-child", {
         method: "POST",
@@ -170,12 +180,15 @@ export const RegisterChildPage = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
         },
-        body: JSON.stringify(state.registerData),
+        body: JSON.stringify(finalData),
       });
+
       const res = await response.json();
 
       if (res.success) {
         state.isSuccess = true;
+
+        await window.appController?.model.fetchParentData();
         window.appController?.navigateToPage("registerChild");
       } else {
         alert(res.error || "Erreur lors de la création du profil");

@@ -7,17 +7,41 @@ export class AppModel {
       weeklyPlan: {},
       streakData: { current_streak: 0, last_practice_date: null },
     };
+    this.parentData = null;
     this.onboardingStep = 0;
     this.tempData = {};
   }
 
   async init() {
-    const childId = localStorage.getItem("activeChildId");
-    if (!this.isLoggedIn() || !childId) {
-      this.loadLocalData();
-      return;
-    }
+    const token = localStorage.getItem("jwt_token");
+    if (!token) return;
 
+    await this.fetchParentData();
+
+    const childId = localStorage.getItem("activeChildId");
+    if (childId) {
+      await this.fetchChildFullData(childId);
+    } else {
+      this.loadLocalData();
+    }
+  }
+
+  async fetchParentData() {
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await fetch("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await response.json();
+      if (result.success) {
+        this.parentData = result.data;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async fetchChildFullData(childId) {
     try {
       const token = localStorage.getItem("jwt_token");
       const response = await fetch(`/api/child/${childId}/full-data`, {
@@ -28,20 +52,19 @@ export class AppModel {
       });
       const result = await response.json();
 
-      if (!result.success) throw new Error(result.error);
-
-      this.activeChild = {
-        ...this.activeChild,
-        ...result.data,
-        weeklyPlan: result.data.plan || result.data.jours || {},
-        streakData: result.data.streak || {
-          current_streak: 0,
-          last_practice_date: null,
-        },
-      };
-
-      this.generateWeeklyView();
-      this.saveData();
+      if (result.success) {
+        this.activeChild = {
+          ...this.activeChild,
+          ...result.data,
+          weeklyPlan: result.data.plan || result.data.jours || {},
+          streakData: result.data.streak || {
+            current_streak: 0,
+            last_practice_date: null,
+          },
+        };
+        this.generateWeeklyView();
+        this.saveData();
+      }
     } catch (e) {
       this.loadLocalData();
     }
@@ -71,18 +94,23 @@ export class AppModel {
     return this.activeChild;
   }
 
+  getParentData() {
+    return this.parentData;
+  }
+
+  getChildren() {
+    return this.parentData?.children || [];
+  }
+
   generateWeeklyView() {
     if (!this.activeChild) return;
 
-    let plan = this.activeChild.weeklyPlan || {
-      monday: { practice: 1, color: "#7b2fbe" },
-    };
+    let plan = this.activeChild.weeklyPlan || {};
 
     if (typeof plan === "string") {
       try {
         plan = JSON.parse(plan);
       } catch (error) {
-        console.warn("Format du plan hebdomadaire invalide, réinitialisation.");
         plan = [];
       }
     }
