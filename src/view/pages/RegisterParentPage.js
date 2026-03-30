@@ -94,7 +94,6 @@ export const RegisterParentPage = {
       if (response.ok && res.success) {
         localStorage.setItem("jwt_token", res.token);
         window.appController?.model.login();
-        // Une fois le parent créé, on va à l'accueil (ou vers la création enfant)
         window.appController?.navigateToPage("home");
       } else {
         alert(res.error || "Erreur lors de l'inscription");

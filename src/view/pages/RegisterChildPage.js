@@ -8,10 +8,11 @@ import {
 import { esc, isStepValid } from "../../utils/FormHelpers.js";
 
 const state = {
-  step: 2,
+  step: 1,
   isLoading: false,
   isSuccess: false,
   registerData: {
+    name: "",
     age: "",
     instrument: "",
     duree: "",
@@ -52,6 +53,9 @@ export const RegisterChildPage = {
 
   buildStepContent() {
     switch (state.step) {
+      case 1:
+        return `<p class="ca-question">Quel est ton <em>prénom</em> ?</p>
+                <input class="ca-input reg-input" type="text" data-field="name" placeholder="Ton prénom" value="${esc(state.registerData.name)}">`;
       case 2:
         return `<p class="ca-question">Quel est ton <em>âge</em> ?</p>
                 <input class="ca-input reg-input" type="number" data-field="age" value="${esc(state.registerData.age)}">`;
@@ -92,7 +96,7 @@ export const RegisterChildPage = {
       <div class="ca-screen ca-success">
         <div class="ca-success-body">
           <div class="ca-success-mascot">${state.registerData.mascotte || "🎵"}</div>
-          <h2 class="ca-success-title">Compte enfant créé !</h2>
+          <h2 class="ca-success-title">Bienvenue, ${esc(state.registerData.name)} !</h2>
         </div>
         <div class="ca-footer">
           <button class="ca-btn-next" id="ca-btn-start">C'est parti ! 🚀</button>

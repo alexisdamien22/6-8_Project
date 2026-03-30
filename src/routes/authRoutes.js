@@ -50,11 +50,10 @@ router.post("/register", async (req, res) => {
     });
   } catch (err) {
     console.error("CRASH REGISTER:", err);
-    // Renvoie l'erreur exacte pour le debug
     return res.status(500).json({
       success: false,
       error: err.message,
-      stack: err.stack, // Optionnel: pour voir la ligne exacte du crash
+      stack: err.stack,
     });
   }
 });

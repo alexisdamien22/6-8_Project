@@ -18,11 +18,15 @@ export function isStepValid(step, isLoginMode, isLoading, state, loginState) {
 
   switch (step) {
     case 1:
-      return Boolean(
-        state.email?.includes("@") &&
-        state.password?.length >= 8 &&
-        state.password === state.confirmPassword,
-      );
+      if (state.hasOwnProperty("email")) {
+        return Boolean(
+          state.email?.includes("@") &&
+          state.password?.length >= 8 &&
+          state.password === state.confirmPassword,
+        );
+      }
+      return Boolean(state.name?.trim().length >= 2);
+
     case 2: {
       const age = parseInt(state.age, 10);
       return !isNaN(age) && age >= 5 && age <= 99;

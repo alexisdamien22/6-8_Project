@@ -103,7 +103,7 @@ export class AppView {
     if (footer) footer.style.display = "none";
 
     const header = document.querySelector("header, .main-header");
-    if (header) header.style.display = "none";
+    if (header) header.style.display = "";
 
     setSecureHTML(this.app, ParentHomePage.getHTML(data));
     ParentHomePage.afterRender();
@@ -163,6 +163,7 @@ export class AppView {
 
     const header = document.querySelector("header, .main-header");
     if (header) header.style.display = "none";
+
     setSecureHTML(this.app, RegisterChildPage.getHTML());
     RegisterChildPage.attachEventListeners();
   }
@@ -175,16 +176,4 @@ export class AppView {
     setSecureHTML(this.app, LoginPage.getHTML());
     LoginPage.attachEventListeners();
   }
-  /*
-  renderCreateAccount() {
-    const footer = document.querySelector(".main-footer");
-    if (footer) footer.style.display = "none";
-
-    const header = document.querySelector("header, .main-header");
-    if (header) header.style.display = "none";
-
-    setSecureHTML(this.app, CreateAccountPage.getHTML());
-    CreateAccountPage.afterRender();
-  }
-    */
 }

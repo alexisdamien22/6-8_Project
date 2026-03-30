@@ -27,7 +27,7 @@ export const LoginPage = {
             <form id="ca-login-form">
               <input class="ca-input login-input" type="email" data-field="email" 
                 placeholder="Ton email" value="${esc(state.loginData.email)}">
-              <input class="ca-input login-input" type="password" data-field="password" 
+              <input class="ca-input login-input" type="password" data-field="password" autocomplete="current-password"
                 placeholder="Ton mot de passe" value="${esc(state.loginData.password)}">
             </form>
             <a href="#" class="ca-forgot-pass">Mot de passe oublié ?</a>
@@ -68,7 +68,6 @@ export const LoginPage = {
     if (state.isLoading) return;
 
     state.isLoading = true;
-    window.appController?.updateView();
 
     try {
       const response = await fetch("/api/auth/login", {
@@ -90,7 +89,6 @@ export const LoginPage = {
       alert("Network error");
     } finally {
       state.isLoading = false;
-      window.appController?.updateView();
     }
   },
 
