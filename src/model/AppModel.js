@@ -19,7 +19,13 @@ export class AppModel {
     }
 
     try {
-      const response = await fetch(`/api/child/${childId}/full-data`);
+      const token = localStorage.getItem("jwt_token");
+      const response = await fetch(`/api/child/${childId}/full-data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       const result = await response.json();
 
       if (!result.success) throw new Error(result.error);
@@ -182,13 +188,20 @@ export class AppModel {
     const activeChildId = localStorage.getItem("activeChildId");
     if (!activeChildId) return;
 
+    const token = localStorage.getItem("jwt_token");
     try {
       await fetch(`/api/child/${activeChildId}/streak`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ streak: newStreak, lastDate: todayStr }),
       });
-      await fetch(`/api/child/${activeChildId}/sessions`, { method: "POST" });
+      await fetch(`/api/child/${activeChildId}/sessions`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
     } catch (err) {
       console.error(err);
     }

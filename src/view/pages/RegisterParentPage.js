@@ -76,7 +76,6 @@ export const RegisterParentPage = {
 
   async handleRegistration() {
     if (state.isLoading) return;
-
     state.isLoading = true;
     window.appController?.navigateToPage("registerParent");
 
@@ -92,9 +91,10 @@ export const RegisterParentPage = {
 
       const res = await response.json();
 
-      if (res.success) {
+      if (response.ok && res.success) {
         localStorage.setItem("jwt_token", res.token);
         window.appController?.model.login();
+        // Une fois le parent créé, on va à l'accueil (ou vers la création enfant)
         window.appController?.navigateToPage("home");
       } else {
         alert(res.error || "Erreur lors de l'inscription");
@@ -102,7 +102,7 @@ export const RegisterParentPage = {
         window.appController?.navigateToPage("registerParent");
       }
     } catch (err) {
-      alert("Erreur réseau");
+      alert("Erreur de connexion au serveur");
       state.isLoading = false;
       window.appController?.navigateToPage("registerParent");
     }
@@ -111,13 +111,15 @@ export const RegisterParentPage = {
   refreshBtn() {
     const btn = document.getElementById("ca-main-btn");
     if (btn) {
-      btn.disabled = !isStepValid(
+      const isValid = isStepValid(
         1,
         false,
         state.isLoading,
         state.registerData,
         {},
       );
+      btn.disabled = !isValid;
+      btn.textContent = state.isLoading ? "Chargement..." : "Créer mon compte";
     }
   },
 };

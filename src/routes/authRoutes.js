@@ -20,7 +20,13 @@ const DAYS_MAP = {
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, jours, ...otherData } = req.body;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Email et mot de passe requis." });
+    }
 
     const existingUser = await UserManager.findByEmail(email);
     if (existingUser) {
@@ -29,9 +35,34 @@ router.post("/register", async (req, res) => {
         .json({ success: false, error: "E-mail déjà utilisé." });
     }
 
+    console.log("Attempting to create user...");
     const adultId = await UserManager.create(email, password);
-    const childData = { email, password, jours, ...otherData };
-    const childId = await ChildAccountManager.create(childData, adultId);
+    console.log("User created with ID:", adultId);
+
+    const token = jwt.sign({ userId: adultId }, JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
+    return res.status(201).json({
+      success: true,
+      token,
+      userId: adultId,
+    });
+  } catch (err) {
+    console.error("CRASH REGISTER:", err);
+    // Renvoie l'erreur exacte pour le debug
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      stack: err.stack, // Optionnel: pour voir la ligne exacte du crash
+    });
+  }
+});
+
+router.post("/register-child", async (req, res) => {
+  try {
+    const { userId, jours, ...childInfo } = req.body;
+    const childId = await ChildAccountManager.create(childInfo, userId);
 
     if (Array.isArray(jours)) {
       for (const j of jours) {
@@ -43,24 +74,21 @@ router.post("/register", async (req, res) => {
 
     await StreaksManager.update(childId, 0, null);
 
-    const token = jwt.sign({ userId: adultId, childId }, JWT_SECRET, {
-      expiresIn: "30d",
-    });
-
-    return res.status(201).json({ success: true, token, childId });
+    return res.status(201).json({ success: true, childId });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({ success: false, error: "Erreur interne du serveur." });
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 });
 
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await UserManager.findByEmail(email);
+
     if (!user || !(await UserManager.verifyPassword(password, user.password))) {
       return res
         .status(401)
@@ -68,23 +96,23 @@ router.post("/login", async (req, res) => {
     }
 
     const children = await ChildAccountManager.getChildrenOfAdult(user.id);
-    if (!children || children.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Aucun profil enfant trouvé." });
+    const tokenData = { userId: user.id };
+
+    if (children && children.length > 0) {
+      tokenData.childId = children[0].id;
     }
 
-    const childId = children[0].id;
-    const token = jwt.sign({ userId: user.id, childId }, JWT_SECRET, {
-      expiresIn: "30d",
-    });
+    const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: "30d" });
 
-    return res.status(200).json({ success: true, token, childId });
+    return res.status(200).json({
+      success: true,
+      token,
+      hasChild: children && children.length > 0,
+      childId: children && children.length > 0 ? children[0].id : null,
+    });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({ success: false, error: "Erreur interne du serveur." });
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 

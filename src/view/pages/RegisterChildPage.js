@@ -44,7 +44,7 @@ export const RegisterChildPage = {
           </div>
           <div class="ca-form-block">${this.buildStepContent()}</div>
           <button class="ca-btn-next" id="ca-next-step" ${isValid ? "" : "disabled"}>
-            ${state.isLoading ? '<span class="ca-spinner"></span>' : state.step === TOTAL_STEPS ? "Terminer" : "Suivant"}
+            ${state.isLoading ? "Chargement..." : state.step === TOTAL_STEPS ? "Terminer" : "Suivant"}
           </button>
         </div>
       </div>`;
@@ -63,14 +63,27 @@ export const RegisterChildPage = {
                     <img src="${ins.png}" alt="${ins.lbl}"/><span>${ins.lbl}</span>
                   </div>`,
                 ).join("")}</div>`;
+      case 4:
+        return `<p class="ca-question">Depuis <em>combien d'années</em> ?</p>
+                <input class="ca-input reg-input" type="number" data-field="duree" value="${esc(state.registerData.duree)}">`;
+      case 5:
+        return `<p class="ca-question">Ton <em>école</em> ou conservatoire ?</p>
+                <input class="ca-input reg-input" type="text" data-field="ecole" value="${esc(state.registerData.ecole)}">`;
       case 6:
         return `<p class="ca-question">Choisis une <em>mascotte</em> !</p>
                 <div class="ca-mascot-grid">${MASCOTTES.map(
                   (m) => `
                   <div class="ca-mascot-cell ${state.registerData.mascotte === m ? "sel" : ""}" data-mascot="${m}">${m}</div>`,
                 ).join("")}</div>`;
+      case 7:
+        return `<p class="ca-question">Quels jours vas-tu <em>travailler</em> ?</p>
+                <div class="ca-days-row">${JOURS.map(
+                  (j) => `
+                  <button class="ca-day-pill ${state.registerData.jours.includes(j) ? "sel" : ""}" data-day="${j}">${j}</button>
+                `,
+                ).join("")}</div>`;
       default:
-        return `<p class="ca-question">Étape ${state.step} en cours...</p>`;
+        return "";
     }
   },
 
@@ -107,14 +120,24 @@ export const RegisterChildPage = {
     document.querySelectorAll(".ca-instr-card").forEach((card) => {
       card.addEventListener("click", (e) => {
         state.registerData.instrument = e.currentTarget.dataset.id;
-        window.appController?.updateView();
+        window.appController?.navigateToPage("registerChild");
       });
     });
 
     document.querySelectorAll(".ca-mascot-cell").forEach((cell) => {
       cell.addEventListener("click", (e) => {
         state.registerData.mascotte = e.currentTarget.dataset.mascot;
-        window.appController?.updateView();
+        window.appController?.navigateToPage("registerChild");
+      });
+    });
+
+    document.querySelectorAll(".ca-day-pill").forEach((pill) => {
+      pill.addEventListener("click", (e) => {
+        const day = e.currentTarget.dataset.day;
+        const idx = state.registerData.jours.indexOf(day);
+        if (idx === -1) state.registerData.jours.push(day);
+        else state.registerData.jours.splice(idx, 1);
+        window.appController?.navigateToPage("registerChild");
       });
     });
 
@@ -126,7 +149,7 @@ export const RegisterChildPage = {
   async handleNext() {
     if (state.step < TOTAL_STEPS) {
       state.step++;
-      window.appController?.updateView();
+      window.appController?.navigateToPage("registerChild");
     } else {
       await this.submitChildData();
     }
@@ -134,7 +157,7 @@ export const RegisterChildPage = {
 
   async submitChildData() {
     state.isLoading = true;
-    window.appController?.updateView();
+    window.appController?.navigateToPage("registerChild");
 
     try {
       const response = await fetch("/api/auth/register-child", {
@@ -149,14 +172,16 @@ export const RegisterChildPage = {
 
       if (res.success) {
         state.isSuccess = true;
+        window.appController?.navigateToPage("registerChild");
       } else {
         alert(res.error || "Erreur lors de la création du profil");
+        state.isLoading = false;
+        window.appController?.navigateToPage("registerChild");
       }
     } catch (err) {
       alert("Erreur réseau");
-    } finally {
       state.isLoading = false;
-      window.appController?.updateView();
+      window.appController?.navigateToPage("registerChild");
     }
   },
 
