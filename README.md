@@ -35,11 +35,7 @@ git clone <[repo-github](https://github.com/alexisdamien22/6-8_Project.git)>
 cd 6-8_Project-betterConnection
 npm install
 
-# Installation des dépendances de production
-
 npm install express mysql2 dotenv bcryptjs jsonwebtoken
-
-# Installation de la dépendance de développement
 
 npm install --save-dev nodemon
 \`\`\`
