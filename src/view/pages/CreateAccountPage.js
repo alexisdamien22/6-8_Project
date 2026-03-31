@@ -40,7 +40,7 @@ let _state = {
   instrument: "",
   duree: "",
   ecole: "",
-  jourLecon: "", // Dernier ajout
+  jourCours: "", // Dernier ajout
   mascotte: "",
   jours: [],
 };
@@ -155,7 +155,7 @@ function isStepValid(step) {
     case 5:
       return _state.ecole.trim() !== "";
     case 6: // Nouveau, le reste est décalé
-        return _state.jourLecon !== ""; 
+        return _state.jourCours !== ""; 
     case 7:
         return _state.mascotte !== "";
     case 8:
@@ -180,7 +180,7 @@ export const CreateAccountPage = {
   },
 
   getHTML() {
-    if (_step === 8) { // Mettre 9 ?
+    if (_step === 9) { // Modifié, il y avait 8
       const instrLbl =
         INSTRUMENTS.find((i) => i.id === _state.instrument)?.lbl ??
         "ton instrument";
@@ -257,7 +257,7 @@ export const CreateAccountPage = {
     btnNext?.addEventListener("click", async () => {
       if (!isStepValid(_step)) return;
 
-      // Si on est à la dernière étape (7), on enregistre en BDD
+      // Si on est à la dernière étape (8), on enregistre en BDD
       if (_step === TOTAL) {
         btnNext.disabled = true;
         btnNext.textContent = "Chargement...";
@@ -274,7 +274,7 @@ export const CreateAccountPage = {
           if (result.success) {
             // On sauvegarde l'ID de l'enfant pour créer le compte adulte après
             localStorage.setItem("currentChildId", result.childId);
-            _step = 8; // Passage à l'écran de succès / À modifier ?
+            _step = 8; // Passage à l'écran de succès / À modifier ? / Déja modifié ?
             window.appController?.navigateToPage("createAccount");
           } else {
             alert("Erreur: " + result.error);
