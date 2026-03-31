@@ -89,8 +89,9 @@ export class AppModel {
     return !!localStorage.getItem("jwt_token");
   }
 
-  login() {
+  async login() {
     localStorage.setItem("user_connected", "true");
+    await this.init();
   }
 
   getChildData() {
@@ -175,7 +176,6 @@ export class AppModel {
       let isPracticeDay = false;
 
       if (Array.isArray(plan)) {
-        // Correction ici : On cherche dans ton tableau d'objets
         isPracticeDay = plan.some((p) => {
           const pDay = p.day_of_week ? p.day_of_week.toLowerCase() : "";
           return (

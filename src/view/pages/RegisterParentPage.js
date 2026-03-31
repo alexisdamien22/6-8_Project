@@ -93,7 +93,7 @@ export const RegisterParentPage = {
 
       if (response.ok && res.success) {
         localStorage.setItem("jwt_token", res.token);
-        window.appController?.model.login();
+        await window.appController?.model.login();
         window.appController?.navigateToPage("home");
       } else {
         alert(res.error || "Erreur lors de l'inscription");

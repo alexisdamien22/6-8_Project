@@ -40,7 +40,7 @@ export function isStepValid(step, isLoginMode, isLoading, state, loginState) {
     }
     case 5:
       return Boolean(state.ecole?.trim().length > 0);
-    case 6: // Ajout et décalage
+    case 6:
       return Boolean(state.jourCours && state.jourCours.trim() !== "");
     case 7:
       return Boolean(state.mascotte);
