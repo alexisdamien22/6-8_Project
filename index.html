@@ -57,7 +57,7 @@
           ]);
 
           const appModel = new AppModel();
-          const view = new AppView();
+          const view = new AppView(appModel);
           const appController = new AppController(appModel, view);
 
           window.appController = appController;

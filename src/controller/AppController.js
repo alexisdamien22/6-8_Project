@@ -19,14 +19,19 @@ export class AppController {
       "menu",
       "settings",
       "profil",
-      "createAccount",
+      "registerParent",
+      "registerChild",
+      "login",
     ];
     return validPages.includes(hash) ? hash : "home";
   }
 
   navigateToPage(pageName) {
-    if (!this.model.isLoggedIn() && pageName !== "createAccount") {
-      this.navigateToPage("createAccount");
+    const publicPages = ["login", "registerParent", "registerChild"];
+    const isPublicPage = publicPages.includes(pageName);
+
+    if (!this.model.isLoggedIn() && !isPublicPage) {
+      this.navigateToPage("login");
       return;
     }
 
@@ -54,8 +59,14 @@ export class AppController {
       case "profil":
         this.view.renderProfil(this.model.getChildData());
         break;
-      case "createAccount":
-        this.view.renderCreateAccount();
+      case "registerParent":
+        this.view.renderRegisterParent();
+        break;
+      case "registerChild":
+        this.view.renderRegisterChild();
+        break;
+      case "login":
+        this.view.renderLogin();
         break;
     }
   }

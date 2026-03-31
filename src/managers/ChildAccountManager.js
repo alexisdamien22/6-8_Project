@@ -8,7 +8,7 @@ export class ChildAccountManager {
     return rows[0] || null;
   }
 
-  static async create(data, adultId = null) {
+  static async create(data, adultId) {
     const age = data.age ? parseInt(data.age, 10) : null;
     const duree = data.duree ? parseInt(data.duree, 10) : null;
 

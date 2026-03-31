@@ -3,17 +3,22 @@ import { PodiumPage } from "./pages/PodiumPage.js";
 import { MusicPage } from "./pages/MusicPage.js";
 import { ProfilPage } from "./pages/ProfilPage.js";
 import { SettingsPage } from "./pages/SettingsPage.js";
+import { RegisterParentPage } from "./pages/RegisterParentPage.js";
+import { RegisterChildPage } from "./pages/RegisterChildPage.js";
+import { LoginPage } from "./pages/LoginPage.js";
 import { AppViewTheme } from "./AppViewTheme.js";
 import { AppViewNavigation } from "./AppViewNavigation.js";
 import { initAppEvents } from "./AppViewEvents.js";
-import { CreateAccountPage } from "./pages/CreateAccountPage.js";
+import { AccountSwitcher } from "./AccountSwitcher.js";
+
 import { ParentHomePage } from "./pages/ParentHomePage.js";
 import { AppFireChange } from "./AppFireChange.js";
 import { setSecureHTML } from "../utils/SecurityHelpers.js";
 
 export class AppView {
-  constructor() {
+  constructor(model) {
     this.app = document.getElementById("app");
+    this.model = model;
     AppViewTheme.init();
     initAppEvents(this);
     this.setupFooterNavigation();
@@ -82,6 +87,25 @@ export class AppView {
       );
     }
   }
+  toggleAccountSwitcher(show) {
+    let switcher = document.getElementById("account-switcher-container");
+
+    if (!switcher && show) {
+      const children = this.model?.getChildren ? this.model.getChildren() : [];
+      AccountSwitcher.create(this, children);
+      switcher = document.getElementById("account-switcher-container");
+    }
+
+    if (switcher) {
+      if (show) {
+        switcher.classList.add("show");
+        document.body.style.overflow = "hidden";
+      } else {
+        switcher.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    }
+  }
 
   renderHome(data) {
     const footer = document.querySelector(".main-footer");
@@ -100,7 +124,7 @@ export class AppView {
     if (footer) footer.style.display = "none";
 
     const header = document.querySelector("header, .main-header");
-    if (header) header.style.display = "none";
+    if (header) header.style.display = "";
 
     setSecureHTML(this.app, ParentHomePage.getHTML(data));
     ParentHomePage.afterRender();
@@ -145,15 +169,32 @@ export class AppView {
   renderProfil(data) {
     setSecureHTML(this.app, ProfilPage.getHTML(data));
   }
+  renderRegisterParent() {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
 
-  renderCreateAccount() {
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+    setSecureHTML(this.app, RegisterParentPage.getHTML());
+    RegisterParentPage.attachEventListeners();
+  }
+  renderRegisterChild() {
     const footer = document.querySelector(".main-footer");
     if (footer) footer.style.display = "none";
 
     const header = document.querySelector("header, .main-header");
     if (header) header.style.display = "none";
 
-    setSecureHTML(this.app, CreateAccountPage.getHTML());
-    CreateAccountPage.afterRender();
+    setSecureHTML(this.app, RegisterChildPage.getHTML());
+    RegisterChildPage.attachEventListeners();
+  }
+  renderLogin() {
+    const footer = document.querySelector(".main-footer");
+    if (footer) footer.style.display = "none";
+
+    const header = document.querySelector("header, .main-header");
+    if (header) header.style.display = "none";
+    setSecureHTML(this.app, LoginPage.getHTML());
+    LoginPage.attachEventListeners();
   }
 }

@@ -8,8 +8,20 @@ export function initAppEvents(view) {
   });
 
   document.addEventListener("click", (e) => {
-    const bottomMenu = document.getElementById("bottom-menu-container");
+    const headerProfile = e.target.closest(".profile-icon");
+    if (headerProfile) {
+      view.toggleAccountSwitcher(true);
+      return;
+    }
 
+    const switcher = document.getElementById("account-switcher-container");
+    if (switcher?.classList.contains("show")) {
+      if (!e.target.closest(".account-switcher-sheet") && !headerProfile) {
+        view.toggleAccountSwitcher(false);
+      }
+    }
+
+    const bottomMenu = document.getElementById("bottom-menu-container");
     if (bottomMenu?.classList.contains("show")) {
       const clickedIcon = e.target.closest(".icon-footer");
       const isMenuIcon = clickedIcon && clickedIcon.dataset?.page === "menu";

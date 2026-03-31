@@ -7,35 +7,67 @@ export class AppModel {
       weeklyPlan: {},
       streakData: { current_streak: 0, last_practice_date: null },
     };
+    this.parentData = null;
     this.onboardingStep = 0;
     this.tempData = {};
   }
 
   async init() {
-    const childId = localStorage.getItem("activeChildId");
-    if (!this.isLoggedIn() || !childId) {
-      this.loadLocalData();
-      return;
-    }
+    const token = localStorage.getItem("jwt_token");
+    if (!token) return;
 
+    await this.fetchParentData();
+
+    const childId = localStorage.getItem("activeChildId");
+    if (childId) {
+      await this.fetchChildFullData(childId);
+    } else {
+      this.loadLocalData();
+    }
+  }
+
+  async fetchParentData() {
     try {
-      const response = await fetch(`/api/child/${childId}/full-data`);
+      const token = localStorage.getItem("jwt_token");
+      const response = await fetch("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       const result = await response.json();
 
-      if (!result.success) throw new Error(result.error);
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `Erreur HTTP ${response.status}`);
+      }
+      this.parentData = result.user;
+    } catch (e) {
+      console.error("Échec de la récupération des données parent:", e.message);
+    }
+  }
 
-      this.activeChild = {
-        ...this.activeChild,
-        ...result.data,
-        weeklyPlan: result.data.plan || result.data.jours || {},
-        streakData: result.data.streak || {
-          current_streak: 0,
-          last_practice_date: null,
+  async fetchChildFullData(childId) {
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await fetch(`/api/child/${childId}/full-data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-      };
+      });
+      const result = await response.json();
 
-      this.generateWeeklyView();
-      this.saveData();
+      if (result.success) {
+        this.activeChild = {
+          ...this.activeChild,
+          ...result.data,
+          weeklyPlan: result.data.plan || result.data.jours || {},
+          streakData: result.data.streak || {
+            current_streak: 0,
+            last_practice_date: null,
+          },
+        };
+        this.generateWeeklyView();
+        this.saveData();
+      }
     } catch (e) {
       this.loadLocalData();
     }
@@ -65,18 +97,23 @@ export class AppModel {
     return this.activeChild;
   }
 
+  getParentData() {
+    return this.parentData;
+  }
+
+  getChildren() {
+    return this.parentData?.children || [];
+  }
+
   generateWeeklyView() {
     if (!this.activeChild) return;
 
-    let plan = this.activeChild.weeklyPlan || {
-      monday: { practice: 1, color: "#7b2fbe" },
-    };
+    let plan = this.activeChild.weeklyPlan || [];
 
     if (typeof plan === "string") {
       try {
         plan = JSON.parse(plan);
       } catch (error) {
-        console.warn("Format du plan hebdomadaire invalide, réinitialisation.");
         plan = [];
       }
     }
@@ -90,6 +127,7 @@ export class AppModel {
       "friday",
       "saturday",
     ];
+
     const dayNameMapFr = {
       monday: "Lun",
       tuesday: "Mar",
@@ -99,6 +137,7 @@ export class AppModel {
       saturday: "Sam",
       sunday: "Dim",
     };
+
     const enToAbbr = {
       monday: "L",
       tuesday: "Ma",
@@ -134,19 +173,32 @@ export class AppModel {
       const dayOfWeek = dayNameArray[date.getDay()];
 
       let isPracticeDay = false;
+
       if (Array.isArray(plan)) {
-        isPracticeDay =
-          plan.includes(dayOfWeek) || plan.includes(enToAbbr[dayOfWeek]);
+        // Correction ici : On cherche dans ton tableau d'objets
+        isPracticeDay = plan.some((p) => {
+          const pDay = p.day_of_week ? p.day_of_week.toLowerCase() : "";
+          return (
+            pDay === dayOfWeek || pDay === enToAbbr[dayOfWeek]?.toLowerCase()
+          );
+        });
       } else if (typeof plan === "object" && plan !== null) {
         isPracticeDay = !!plan[dayOfWeek] || !!plan[enToAbbr[dayOfWeek]];
       }
 
       let status = "nothing";
       if (isPracticeDay) {
-        const isPastOrPracticedToday =
-          date.getTime() < today.getTime() ||
-          (date.getTime() === today.getTime() && hasPracticedToday);
-        status = isPastOrPracticedToday ? "done" : "todo";
+        const dateTimestamp = date.getTime();
+        const todayTimestamp = today.getTime();
+
+        if (
+          dateTimestamp < todayTimestamp ||
+          (dateTimestamp === todayTimestamp && hasPracticedToday)
+        ) {
+          status = "done";
+        } else {
+          status = "todo";
+        }
       }
 
       weeklySessions.push({
@@ -182,13 +234,20 @@ export class AppModel {
     const activeChildId = localStorage.getItem("activeChildId");
     if (!activeChildId) return;
 
+    const token = localStorage.getItem("jwt_token");
     try {
       await fetch(`/api/child/${activeChildId}/streak`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ streak: newStreak, lastDate: todayStr }),
       });
-      await fetch(`/api/child/${activeChildId}/sessions`, { method: "POST" });
+      await fetch(`/api/child/${activeChildId}/sessions`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
     } catch (err) {
       console.error(err);
     }
