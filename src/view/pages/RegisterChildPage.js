@@ -186,6 +186,9 @@ export const RegisterChildPage = {
       if (res.success) {
         state.isSuccess = true;
 
+        // Enregistrer l'ID de l'enfant et récupérer ses données complètes
+        localStorage.setItem("activeChildId", res.childId);
+        await window.appController?.model.fetchChildFullData(res.childId);
         await window.appController?.model.fetchParentData();
         window.appController?.navigateToPage("registerChild");
       } else {

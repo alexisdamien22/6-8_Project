@@ -108,7 +108,7 @@ export class AppModel {
   generateWeeklyView() {
     if (!this.activeChild) return;
 
-    let plan = this.activeChild.weeklyPlan || {};
+    let plan = this.activeChild.weeklyPlan || [];
 
     if (typeof plan === "string") {
       try {
@@ -127,6 +127,7 @@ export class AppModel {
       "friday",
       "saturday",
     ];
+
     const dayNameMapFr = {
       monday: "Lun",
       tuesday: "Mar",
@@ -136,6 +137,7 @@ export class AppModel {
       saturday: "Sam",
       sunday: "Dim",
     };
+
     const enToAbbr = {
       monday: "L",
       tuesday: "Ma",
@@ -171,19 +173,32 @@ export class AppModel {
       const dayOfWeek = dayNameArray[date.getDay()];
 
       let isPracticeDay = false;
+
       if (Array.isArray(plan)) {
-        isPracticeDay =
-          plan.includes(dayOfWeek) || plan.includes(enToAbbr[dayOfWeek]);
+        // Correction ici : On cherche dans ton tableau d'objets
+        isPracticeDay = plan.some((p) => {
+          const pDay = p.day_of_week ? p.day_of_week.toLowerCase() : "";
+          return (
+            pDay === dayOfWeek || pDay === enToAbbr[dayOfWeek]?.toLowerCase()
+          );
+        });
       } else if (typeof plan === "object" && plan !== null) {
         isPracticeDay = !!plan[dayOfWeek] || !!plan[enToAbbr[dayOfWeek]];
       }
 
       let status = "nothing";
       if (isPracticeDay) {
-        const isPastOrPracticedToday =
-          date.getTime() < today.getTime() ||
-          (date.getTime() === today.getTime() && hasPracticedToday);
-        status = isPastOrPracticedToday ? "done" : "todo";
+        const dateTimestamp = date.getTime();
+        const todayTimestamp = today.getTime();
+
+        if (
+          dateTimestamp < todayTimestamp ||
+          (dateTimestamp === todayTimestamp && hasPracticedToday)
+        ) {
+          status = "done";
+        } else {
+          status = "todo";
+        }
       }
 
       weeklySessions.push({

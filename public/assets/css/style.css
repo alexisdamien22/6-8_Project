@@ -835,7 +835,7 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-.ca-instr-icon {
+.ca-instr-card img {
   width: 40px;
   height: 40px;
   display: flex;
@@ -1023,6 +1023,14 @@ input:checked + .slider:before {
 }
 .account-switcher-container.show .account-switcher-sheet {
   transform: translateY(0);
+}
+
+.switcher-list {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
 }
 
 .switcher-item {

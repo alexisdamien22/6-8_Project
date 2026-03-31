@@ -25,20 +25,18 @@ export const AccountSwitcher = {
           <div class="switcher-header">Changer de profil</div>
           <div class="switcher-list">
             ${accountsHTML}
+            <div class="switcher-item" id="btn-switch-add">
+            <div class="switcher-avatar">+</div>
+            <div class="switcher-info">
+              <span class="switcher-name">Ajouter un enfant</span>
+            </div>
+          </div>
           </div>
           <div class="switcher-divider"></div>
           
           <div class="switcher-item" id="btn-switch-parent">
-            <div class="switcher-avatar">👤</div>
             <div class="switcher-info">
               <span class="switcher-name">Espace Parent</span>
-            </div>
-          </div>
-
-          <div class="switcher-item" id="btn-switch-add">
-            <div class="switcher-avatar">+</div>
-            <div class="switcher-info">
-              <span class="switcher-name">Ajouter un enfant</span>
             </div>
           </div>
         </div>
